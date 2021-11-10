@@ -1,38 +1,64 @@
-import spacy
-from sense2vec import Sense2VecComponent
+from os import POSIX_FADV_SEQUENTIAL
 import requests 
 # import spotipy
 # from spotipy.oauth2 import SpotifyClientCredentials
 import json
+import nltk, re, pprint
+import string
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk import pos_tag
+from nltk.stem.wordnet import WordNetLemmatizer
 
 def jprint(obj):
     # create a formatted string of the Python JSON object
     text = json.dumps(obj, sort_keys=True, indent=4)
     print(text)
 
+prompt = """I like the yellow sunshine and clouds...."""
 
+def preprocess_text(text): 
+    text = text.lower()
+    prompt_p = "".join([char for char in prompt if char not in string.punctuation])
 
-nlp = spacy.load("en_core_web_sm")
-s2v = nlp.add_pipe("sense2vec")
-s2v.from_disk("./s2v_old")
+    stop_words = set(stopwords.words('english'))
+    word_tokens = word_tokenize(prompt_p)
 
-doc = nlp("I like sunshine and clouds")
+    filtered_sentence = [w for w in word_tokens if not w.lower() in stop_words]
 
-content_words = []
+    lemmed = [WordNetLemmatizer().lemmatize(w) for w in filtered_sentence]
+    print(lemmed)
 
-for token in doc: 
-    if token.is_stop == False:
-        content_words.append(token.text)
+    pos_sent = pos_tag(lemmed)
+    print(pos_sent)
 
-content_chunks = []
-def find_chunks(text):
-    for chunk in text.noun_chunks:
-        root_word = chunk.root.text
-        if root_word in content_words:
-            content_chunks.append(chunk)
-    return content_chunks
+    return pos_sent
 
-words = find_chunks(doc)
+def get_constituents(pos_sent):
+    grammar = """
+    NP: {<DT>?<JJ>*<NN>}
+    {<NNP>+} 
+    """
+    cp = nltk.RegexpParser(grammar)
+    tree = cp.parse(pos_sent)
+    print(tree)
+
+    constituent_list = []
+
+    for subtree in tree.subtrees():
+        print(subtree)
+        if subtree.label() == 'NP': 
+            np = str(subtree)
+            pattern = r"\w+:?(?=\/)"
+            clauses = [re.findall(pattern, np)]
+            ouput = [" ".join(cl) for cl in clauses]
+            constituent_list.append(ouput[0]) 
+
+    return constituent_list
+
+pre_text = preprocess_text(prompt)
+print(pre_text)
+words = get_constituents(pre_text)
 print(words)
 
 parameters = {
