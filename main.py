@@ -1,21 +1,30 @@
 from os import POSIX_FADV_SEQUENTIAL
 import requests 
-# import spotipy
-# from spotipy.oauth2 import SpotifyClientCredentials
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyClientCredentials
 import json
 import nltk, re, pprint
 import string
+
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag
 from nltk.stem.wordnet import WordNetLemmatizer
+
+import keys
+MUSIXMATCH_API_KEY = keys.MUSIXMATCH_API_KEY
+SPOTIPY_CLIENT_ID = keys.SPOTIPY_CLIENT_ID
+SPOTIPY_CLIENT_SECRET = keys.SPOTIPY_CLIENT_SECRET
+
+print(SPOTIPY_CLIENT_ID)
 
 def jprint(obj):
     # create a formatted string of the Python JSON object
     text = json.dumps(obj, sort_keys=True, indent=4)
     print(text)
 
-prompt = """I like the yellow sunshine and clouds...."""
+prompt = """When you see a red flower"""
 
 def preprocess_text(text): 
     text = text.lower()
@@ -62,8 +71,8 @@ words = get_constituents(pre_text)
 print(words)
 
 parameters = {
-    'apikey': 'cf15cff658d467a39bf34a000c89e8bc',
-    'page_size': 10,
+    'apikey': MUSIXMATCH_API_KEY,
+    'page_size': 5,
     'f_has_lyrics': 1,
     's_track_rating': 'desc'
 }
@@ -73,7 +82,7 @@ word_list = ""
 for word in words:
     word_list += str(word) + ","
 
-parameters['q_lyrics'] = word_list[:-1]
+parameters['q'] = word_list[:-1]
 
 print(parameters)
 
@@ -89,3 +98,23 @@ for item in track_list:
     song_list[song_name] = artist
 
 print(song_list)
+
+scope = "playlist-modify-private"
+
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri='http://localhost:8000/'))
+
+track_id_list = []
+
+for key in song_list:
+    artist = song_list[key]
+    track = key
+    response = sp.search(q='artist:' + artist + ' track:' + track, type='track', limit=1)
+    if response['tracks']['items']:
+        track_id = response['tracks']['items'][0]['id']
+        track_id_list.append(track_id)
+
+
+playlist = sp.user_playlist_create('victoriaslo235', prompt, public=False, collaborative=False, description='')
+
+playlist_id = playlist['id']
+sp.user_playlist_add_tracks('a0f90529781c4f6a', playlist_id, track_id_list, position=None)
