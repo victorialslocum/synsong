@@ -24,7 +24,7 @@ def jprint(obj):
     text = json.dumps(obj, sort_keys=True, indent=4)
     print(text)
 
-prompt = """GitHUb is an interesting frog"""
+prompt = "Beans are only tasty on tuesdays after the church football game"
 
 def preprocess_text(text): 
     text = text.lower()
