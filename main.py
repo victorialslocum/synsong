@@ -1,13 +1,5 @@
-from os import POSIX_FADV_SEQUENTIAL
-import requests 
-import spotipy
+import requests, spotipy, json, nltk, re, pprint, string, itertools, random, spacy
 from spotipy.oauth2 import SpotifyOAuth
-from spotipy.oauth2 import SpotifyClientCredentials
-import json
-import nltk, re, pprint
-import string
-import itertools, random
-
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag
@@ -25,6 +17,30 @@ def jprint(obj):
     print(text)
 
 prompt = "When virtue and modesty enlighten her charms, the lustre of a beautiful woman is brighter than the stars of heaven, and the influence of her power it is in vain to resist."
+
+nlp = spacy.load('en_core_web_sm')
+
+
+def create_title(prompt):
+    text = nlp(prompt)
+    title_list = []
+
+    for token in text:
+        if token.pos_ in ['NOUN', 'ADJ']:
+            if token.dep_ == 'nsubj' or token.head.lemma_ == 'be':
+                tokens = [t.text for t in token.subtree]
+                title_list.append(tokens)
+
+    print(title_list)
+
+    chosen = random.sample(title_list, 1)[0]
+    print(chosen)          
+    title = ' '.join(chosen)
+    
+    return title
+
+title = create_title(prompt)
+print(title)
 
 def preprocess_text(text): 
     text = text.lower()
@@ -170,7 +186,7 @@ for key in song_list:
         track_id_list.append(track_id)
 
 
-playlist = sp.user_playlist_create('victoriaslo235', prompt, public=False, collaborative=False, description='')
+playlist = sp.user_playlist_create('victoriaslo235', title, public=False, collaborative=False, description=prompt)
 
 playlist_id = playlist['id']
 sp.user_playlist_add_tracks('a0f90529781c4f6a', playlist_id, track_id_list, position=None)
