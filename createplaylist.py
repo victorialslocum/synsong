@@ -6,7 +6,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import json
 import nltk, re, pprint
 import string
-import itertools, random
+import itertools
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -19,52 +19,8 @@ MUSIXMATCH_API_KEY = keys.MUSIXMATCH_API_KEY
 SPOTIPY_CLIENT_ID = keys.SPOTIPY_CLIENT_ID
 SPOTIPY_CLIENT_SECRET = keys.SPOTIPY_CLIENT_SECRET
 
-def jprint(obj):
-    # create a formatted string of the Python JSON object
-    text = json.dumps(obj, sort_keys=True, indent=4)
-    print(text)
-
-prompt = "When virtue and modesty enlighten her charms, the lustre of a beautiful woman is brighter than the stars of heaven, and the influence of her power it is in vain to resist."
-
-def preprocess_text(text): 
-    text = text.lower()
-    prompt_p = "".join([char for char in prompt if char not in string.punctuation])
-
-    stop_words = set(stopwords.words('english'))
-    word_tokens = word_tokenize(prompt_p)
-
-    filtered_sentence = [w for w in word_tokens if not w.lower() in stop_words]
-
-    lemmed = [WordNetLemmatizer().lemmatize(w) for w in filtered_sentence]
-    print(lemmed)
-
-    pos_sent = pos_tag(lemmed)
-    print(pos_sent)
-
-    return pos_sent
-
-def get_constituents(pos_sent):
-    grammar = "NP: {<DET>?<JJ>*<NN>}"
-    cp = nltk.RegexpParser(grammar)
-    tree = cp.parse(pos_sent)
-    print(tree)
-
-    constituent_list = [word for word,pos in pos_sent if pos == 'NNP' or pos == 'NNS']
-
-    for subtree in tree.subtrees():
-        if subtree.label() == 'NP': 
-            np = str(subtree)
-            pattern = r"\w+:?(?=\/)"
-            clauses = [re.findall(pattern, np)]
-            ouput = [" ".join(cl) for cl in clauses]
-            constituent_list.append(ouput[0]) 
-
-    return constituent_list
-
-pre_text = preprocess_text(prompt)
-words = get_constituents(pre_text)
-words = random.sample(words, 5)
-print(words)
+title = "test"
+words = ['sunshine', 'fluffy clouds', 'clouds']
 
 def word_list_combo(word_list):
     p = [[]]
@@ -92,9 +48,8 @@ def word_list_combo(word_list):
         if [i] not in fnl:
             fnl.append([i])
 
-    list = fnl[10:]
-    print(list)
-    return list
+    print(fnl)
+    return fnl
 
 word_list = word_list_combo(words)
 
@@ -136,8 +91,7 @@ def get_song_list(parameters):
         artist = process_name(artist)
         song_name = value['track_name']
         song_name = process_name(song_name)
-        if song_name not in song_list:
-            song_list[song_name] = artist
+        song_list[song_name] = artist
 
     return song_list
 
@@ -170,7 +124,7 @@ for key in song_list:
         track_id_list.append(track_id)
 
 
-playlist = sp.user_playlist_create('victoriaslo235', prompt, public=False, collaborative=False, description='')
+playlist = sp.user_playlist_create('victoriaslo235', title, public=False, collaborative=False, description='')
 
 playlist_id = playlist['id']
 sp.user_playlist_add_tracks('a0f90529781c4f6a', playlist_id, track_id_list, position=None)
