@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>synsong</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+</head>
+<body>
+    <h1 class="header">Binary/English conversion or XOR cipher!</h1>
+    <div class="container">
+      <div class="form">
+        <form action="" method="get">
+          <label for="input1"> Input 1: </label><br />
+          <input class="input" type="text" name="input1" /><br />
+          <input class="button" type="submit" value="convert" />
+        </form>
+      </div>
+      <div class="description">
+        <p class="title">How it works</p>
+        <p class="content">
+          If you give one input into the first box, it will detect whether you
+          have inputted English or binary and give you the translation from that
+          to the other. <br />
+          <br />
+          If you give two binary or two English inputs, it will use a XOR cipher
+          to encript your text and return the encrypted output.<br />
+          <br />
+          If you give a binary input and a English input, it will decript your
+          phrase using a XOR cipher again and return the English output. It's
+          case sensitive but only works with letters!
+        </p>
+      </div>
+    </div>
+</body>
+</html>
