@@ -2,5 +2,6 @@
   "editor.formatOnSave": true,
   "editor.formatOnType": false,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "liveServer.settings.port": 5501
+  "liveServer.settings.port": 5501, 
+  "python.defaultInterpreterPath": "/home/victoriaslocum/synsong/venv/bin/python3",
 }

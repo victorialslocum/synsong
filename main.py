@@ -5,14 +5,13 @@
 
 import requests
 import spotipy
-import json
 import re
 import random
 import spacy
 import time
 from spotipy.oauth2 import SpotifyOAuth
 from itertools import chain
-from flask import Flask, render_template, redirect, request, session, make_response, url_for
+from flask import Flask, render_template, redirect, request, session, url_for
 from flask_oauthlib.client import OAuth, OAuthException
 
 import keys
@@ -32,7 +31,6 @@ oauth = OAuth(app)
 
 @app.route("/")
 def verify():
-    # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
     sp_oauth = spotipy.oauth2.SpotifyOAuth(
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
@@ -51,10 +49,12 @@ def index():
 
 @app.route("/callback")
 def callback():
-    # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
+    session.clear()
     sp_oauth = spotipy.oauth2.SpotifyOAuth(
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
-    session.clear()
+    for key in list(session.keys()):
+        print(key)
+        session.pop(key)
     code = request.args.get('code')
     token_info = sp_oauth.get_access_token(code)
 
