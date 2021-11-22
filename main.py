@@ -9,9 +9,10 @@ import re
 import random
 import spacy
 import time
+import json
 from spotipy.oauth2 import SpotifyOAuth
 from itertools import chain
-from flask import Flask, render_template, redirect, request, session, url_for
+from flask import Flask, render_template, redirect, request, session, url_for, make_response
 from flask_oauthlib.client import OAuth, OAuthException
 
 import keys
@@ -28,6 +29,19 @@ app = Flask(__name__)
 app.secret_key = SECRET_KEY
 oauth = OAuth(app)
 
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+
+@app.after_request
+def add_header(r):
+    """
+    Add headers to both force latest IE rendering engine or Chrome Frame,
+    and also to cache the rendered page for 10 minutes.
+    """
+    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    r.headers["Pragma"] = "no-cache"
+    r.headers["Expires"] = "0"
+    r.headers['Cache-Control'] = 'public, max-age=0'
+    return r
 
 @app.route("/")
 def verify():
@@ -49,29 +63,32 @@ def index():
 
 @app.route("/callback")
 def callback():
-    session.clear()
+    # session.clear()
     sp_oauth = spotipy.oauth2.SpotifyOAuth(
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
-    for key in list(session.keys()):
-        print(key)
-        session.pop(key)
+    # session.modified = True
     code = request.args.get('code')
     token_info = sp_oauth.get_access_token(code)
-
+    print(token_info)
     # Saving the access token along with all other token related info
-    session["token_info"] = token_info
-    print(session['token_info'])
-
-    return redirect("index")
+    # session["token_info"] = token_info
+    # print(session['token_info'])
+    resp = make_response(redirect("index"))
+    resp.set_cookie('token_info', json.dumps(token_info))
+    return resp
+    # return redirect("index")
 
 
 @app.route("/make_playlist/<prompt>")
 def make_playlist(prompt):
-    session['token_info'], authorized = get_token(session)
-    print(session['token_info'])
-    session.modified = True
-    if not authorized:
-        return redirect('/')
+    # session.clear()
+    # session['token_info'], authorized = get_token(session)
+    # print(session['token_info'])
+    # session.modified = True
+    token_info = request.cookies.get('token_info')
+    print(token_info)
+    # if not authorized:
+    #     return redirect('/')
 
     nlp = spacy.load('en_core_web_sm')
 
@@ -221,7 +238,8 @@ def make_playlist(prompt):
 
     print(songs)
 
-    sp = spotipy.Spotify(auth=session.get('token_info').get('access_token'))
+    # sp = spotipy.Spotify(auth=session.get('token_info').get('access_token'))
+    sp = spotipy.Spotify(auth=token_info['access_token'])
 
     user = sp.me()
     print(user)
@@ -247,29 +265,29 @@ def make_playlist(prompt):
     return redirect(url_for('index', success=True))
 
 
-def get_token(session):
-    token_valid = False
-    token_info = session.get("token_info", {})
+# def get_token(session):
+#     token_valid = False
+#     token_info = session.get("token_info", {})
 
-    # Checking if the session already has a token stored
-    if not (session.get('token_info', False)):
-        token_valid = False
-        return token_info, token_valid
+#     # Checking if the session already has a token stored
+#     if not (session.get('token_info', False)):
+#         token_valid = False
+#         return token_info, token_valid
 
-    # Checking if token has expired
-    now = int(time.time())
-    is_token_expired = session.get('token_info').get('expires_at') - now < 60
+#     # Checking if token has expired
+#     now = int(time.time())
+#     is_token_expired = session.get('token_info').get('expires_at') - now < 60
 
-    # Refreshing token if it has expired
-    if (is_token_expired):
-        # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
-        sp_oauth = spotipy.oauth2.SpotifyOAuth(
-            client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
-        token_info = sp_oauth.refresh_access_token(
-            session.get('token_info').get('refresh_token'))
+#     # Refreshing token if it has expired
+#     if (is_token_expired):
+#         # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
+#         sp_oauth = spotipy.oauth2.SpotifyOAuth(
+#             client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
+#         token_info = sp_oauth.refresh_access_token(
+#             session.get('token_info').get('refresh_token'))
 
-    token_valid = True
-    return token_info, token_valid
+#     token_valid = True
+#     return token_info, token_valid
 
 
 if __name__ == "__main__":
