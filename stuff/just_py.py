@@ -2,7 +2,6 @@ import requests
 import spotipy
 import json
 import re
-import itertools
 import random
 import spacy
 from spotipy.oauth2 import SpotifyOAuth

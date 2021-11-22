@@ -1,33 +1,72 @@
+# to run this (lol)
+# export FLASK_APP=main.py
+# export FLASK_ENV=development
+# flask run
+
 import requests
 import spotipy
 import json
 import re
 import random
 import spacy
+import time
 from spotipy.oauth2 import SpotifyOAuth
 from itertools import chain
-from flask import Flask
-from flask import request
-from flask import render_template
-
-
-app = Flask(__name__)
-
+from flask import Flask, render_template, redirect, request, session, make_response, url_for
+from flask_oauthlib.client import OAuth, OAuthException
 
 import keys
 MUSIXMATCH_API_KEY = keys.MUSIXMATCH_API_KEY
 SPOTIPY_CLIENT_ID = keys.SPOTIPY_CLIENT_ID
 SPOTIPY_CLIENT_SECRET = keys.SPOTIPY_CLIENT_SECRET
 
+REDIRECT_URI = "http://127.0.0.1:5000/callback"
+API_BASE = 'https://accounts.spotify.com'
+SCOPE = 'playlist-modify-public user-read-private'
+
+app = Flask(__name__)
+app.secret_key = 'victoriarocks'
+oauth = OAuth(app)
+
 @app.route("/")
+def verify():
+    # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
+    sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id = SPOTIPY_CLIENT_ID, client_secret = SPOTIPY_CLIENT_SECRET, redirect_uri = REDIRECT_URI, scope = SCOPE)
+    auth_url = sp_oauth.get_authorize_url()
+    print(auth_url)
+    return redirect(auth_url)
+
+@app.route("/index", methods=['GET', 'POST'])
 def index():
-    input1 = request.args.get("prompt", "")
+    if request.method == 'POST':
+        prompt = request.form['prompt']
+        return redirect(url_for('make_playlist', prompt=prompt))
+    else:
+        return render_template("index.html")
 
-    return render_template("index.html", input1=input1)
+@app.route("/callback")
+def callback():
+    # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
+    sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id = SPOTIPY_CLIENT_ID, client_secret = SPOTIPY_CLIENT_SECRET, redirect_uri = REDIRECT_URI, scope = SCOPE)
+    session.clear()
+    code = request.args.get('code')
+    token_info = sp_oauth.get_access_token(code)
 
-@app.route("/<prompt>")
+    # Saving the access token along with all other token related info
+    session["token_info"] = token_info
+    print(session['token_info'])
+
+
+    return redirect("index")
+
+@app.route("/make_playlist/<prompt>")
 def make_playlist(prompt):
-
+    session['token_info'], authorized = get_token(session)
+    print(session['token_info'])
+    session.modified = True
+    if not authorized:
+        return redirect('/')
+    
     nlp = spacy.load('en_core_web_sm')
 
     def create_title(prompt):
@@ -47,6 +86,7 @@ def make_playlist(prompt):
         title = ' '.join(chosen)
 
         return title
+
 
     title = create_title(prompt)
     print(title)
@@ -184,10 +224,10 @@ def make_playlist(prompt):
 
     print(songs)
 
-    scope = "playlist-modify-public"
+    sp = spotipy.Spotify(auth=session.get('token_info').get('access_token'))
 
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=SPOTIPY_CLIENT_ID,
-                        client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri='http://localhost:8000/'))
+    user = sp.me()
+    print(user)
 
     track_id_list = []
 
@@ -201,9 +241,34 @@ def make_playlist(prompt):
             track_id_list.append(track_id)
 
 
-    playlist = sp.user_playlist_create(
-        'victoriaslo235', title, public=True, collaborative=False, description=prompt)
+    playlist = sp.user_playlist_create(user['id'], title, public=True, collaborative=False, description=prompt)
 
     playlist_id = playlist['id']
-    sp.user_playlist_add_tracks(
-        'a0f90529781c4f6a', playlist_id, track_id_list, position=None)
+    sp.user_playlist_add_tracks(user['id'], playlist_id, track_id_list, position=None)
+
+    return redirect(url_for('index', success = True))
+
+def get_token(session):
+    token_valid = False
+    token_info = session.get("token_info", {})
+
+    # Checking if the session already has a token stored
+    if not (session.get('token_info', False)):
+        token_valid = False
+        return token_info, token_valid
+
+    # Checking if token has expired
+    now = int(time.time())
+    is_token_expired = session.get('token_info').get('expires_at') - now < 60
+
+    # Refreshing token if it has expired
+    if (is_token_expired):
+        # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
+        sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id = SPOTIPY_CLIENT_ID, client_secret = SPOTIPY_CLIENT_SECRET, redirect_uri = REDIRECT_URI, scope = SCOPE)
+        token_info = sp_oauth.refresh_access_token(session.get('token_info').get('refresh_token'))
+
+    token_valid = True
+    return token_info, token_valid
+
+if __name__ == "__main__":
+    app.run(debug=True)
