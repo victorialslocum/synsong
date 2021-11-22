@@ -19,22 +19,26 @@ import keys
 MUSIXMATCH_API_KEY = keys.MUSIXMATCH_API_KEY
 SPOTIPY_CLIENT_ID = keys.SPOTIPY_CLIENT_ID
 SPOTIPY_CLIENT_SECRET = keys.SPOTIPY_CLIENT_SECRET
+SECRET_KEY = keys.SECRET_KEY
 
 REDIRECT_URI = "http://127.0.0.1:5000/callback"
 API_BASE = 'https://accounts.spotify.com'
 SCOPE = 'playlist-modify-public user-read-private'
 
 app = Flask(__name__)
-app.secret_key = 'victoriarocks'
+app.secret_key = SECRET_KEY
 oauth = OAuth(app)
+
 
 @app.route("/")
 def verify():
     # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
-    sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id = SPOTIPY_CLIENT_ID, client_secret = SPOTIPY_CLIENT_SECRET, redirect_uri = REDIRECT_URI, scope = SCOPE)
+    sp_oauth = spotipy.oauth2.SpotifyOAuth(
+        client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     print(auth_url)
     return redirect(auth_url)
+
 
 @app.route("/index", methods=['GET', 'POST'])
 def index():
@@ -44,10 +48,12 @@ def index():
     else:
         return render_template("index.html")
 
+
 @app.route("/callback")
 def callback():
     # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
-    sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id = SPOTIPY_CLIENT_ID, client_secret = SPOTIPY_CLIENT_SECRET, redirect_uri = REDIRECT_URI, scope = SCOPE)
+    sp_oauth = spotipy.oauth2.SpotifyOAuth(
+        client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     session.clear()
     code = request.args.get('code')
     token_info = sp_oauth.get_access_token(code)
@@ -56,8 +62,8 @@ def callback():
     session["token_info"] = token_info
     print(session['token_info'])
 
-
     return redirect("index")
+
 
 @app.route("/make_playlist/<prompt>")
 def make_playlist(prompt):
@@ -66,7 +72,7 @@ def make_playlist(prompt):
     session.modified = True
     if not authorized:
         return redirect('/')
-    
+
     nlp = spacy.load('en_core_web_sm')
 
     def create_title(prompt):
@@ -87,10 +93,8 @@ def make_playlist(prompt):
 
         return title
 
-
     title = create_title(prompt)
     print(title)
-
 
     def get_constituents(prompt):
         text = nlp(prompt)
@@ -113,12 +117,10 @@ def make_playlist(prompt):
         print(const_list)
         return const_list
 
-
     words = get_constituents(prompt)
     if len(words) > 5:
         words = random.sample(words, 5)
     print(words)
-
 
     def word_list_combo(word_list):
         p = [[]]
@@ -150,13 +152,11 @@ def make_playlist(prompt):
             list = fnl[12:]
         else:
             list = fnl
-        
+
         print(list)
         return list
 
-
     word_list = word_list_combo(words)
-
 
     def parameters(word_list, page_size, s_track_rating):
         parameters = {
@@ -176,7 +176,6 @@ def make_playlist(prompt):
 
         return parameters
 
-
     def process_name(name):
         name = re.sub(r"\([^()]*\)", "", name)
         name = name.split("-")[0]
@@ -185,7 +184,6 @@ def make_playlist(prompt):
         name = name.strip()
         name = name.lower()
         return name
-
 
     def get_song_list(parameters):
         response = requests.get(
@@ -204,7 +202,6 @@ def make_playlist(prompt):
 
         return song_list
 
-
     song_dicts = []
 
     for list in word_list:
@@ -214,7 +211,7 @@ def make_playlist(prompt):
         song_dicts.append(get_song_list(parameter1))
         song_dicts.append(get_song_list(parameter2))
 
-    songs = {}  
+    songs = {}
 
     song_list = dict(chain.from_iterable(d.items() for d in song_dicts))
 
@@ -235,18 +232,20 @@ def make_playlist(prompt):
         artist = artist
         track = key
         response = sp.search(q='artist:' + artist +
-                            ' track:' + track, type='track', limit=1)
+                             ' track:' + track, type='track', limit=1)
         if response['tracks']['items']:
             track_id = response['tracks']['items'][0]['id']
             track_id_list.append(track_id)
 
-
-    playlist = sp.user_playlist_create(user['id'], title, public=True, collaborative=False, description=prompt)
+    playlist = sp.user_playlist_create(
+        user['id'], title, public=True, collaborative=False, description=prompt)
 
     playlist_id = playlist['id']
-    sp.user_playlist_add_tracks(user['id'], playlist_id, track_id_list, position=None)
+    sp.user_playlist_add_tracks(
+        user['id'], playlist_id, track_id_list, position=None)
 
-    return redirect(url_for('index', success = True))
+    return redirect(url_for('index', success=True))
+
 
 def get_token(session):
     token_valid = False
@@ -264,11 +263,14 @@ def get_token(session):
     # Refreshing token if it has expired
     if (is_token_expired):
         # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
-        sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id = SPOTIPY_CLIENT_ID, client_secret = SPOTIPY_CLIENT_SECRET, redirect_uri = REDIRECT_URI, scope = SCOPE)
-        token_info = sp_oauth.refresh_access_token(session.get('token_info').get('refresh_token'))
+        sp_oauth = spotipy.oauth2.SpotifyOAuth(
+            client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
+        token_info = sp_oauth.refresh_access_token(
+            session.get('token_info').get('refresh_token'))
 
     token_valid = True
     return token_info, token_valid
+
 
 if __name__ == "__main__":
     app.run(debug=True)
