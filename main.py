@@ -31,25 +31,27 @@ oauth = OAuth(app)
 
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
-@app.after_request
-def add_header(r):
-    """
-    Add headers to both force latest IE rendering engine or Chrome Frame,
-    and also to cache the rendered page for 10 minutes.
-    """
-    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    r.headers["Pragma"] = "no-cache"
-    r.headers["Expires"] = "0"
-    r.headers['Cache-Control'] = 'public, max-age=0'
-    return r
+# @app.after_request
+# def add_header(r):
+#     """
+#     Add headers to both force latest IE rendering engine or Chrome Frame,
+#     and also to cache the rendered page for 10 minutes.
+#     """
+#     r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+#     r.headers["Pragma"] = "no-cache"
+#     r.headers["Expires"] = "0"
+#     r.headers['Cache-Control'] = 'public, max-age=0'
+#     return r
 
 @app.route("/")
 def verify():
     sp_oauth = spotipy.oauth2.SpotifyOAuth(
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
-    print(auth_url)
-    return redirect(auth_url)
+    if "token_info" in session:
+        return "logged in " + "<a href=\"/logout\">log out</a>"
+    else:
+        return "<a href=\"" + auth_url + "&show_dialog=true\">Login</a>"
 
 
 @app.route("/index", methods=['GET', 'POST'])
@@ -63,30 +65,44 @@ def index():
 
 @app.route("/callback")
 def callback():
-    # session.clear()
     sp_oauth = spotipy.oauth2.SpotifyOAuth(
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
-    # session.modified = True
+    session.clear()
     code = request.args.get('code')
-    token_info = sp_oauth.get_access_token(code)
-    print(token_info)
+    print("WEKNOW HEHEHEEH " + code)
+    token_info = sp_oauth.get_access_token(code, as_dict=True, check_cache=False)
     # Saving the access token along with all other token related info
-    # session["token_info"] = token_info
-    # print(session['token_info'])
-    resp = make_response(redirect("index"))
-    resp.set_cookie('token_info', json.dumps(token_info))
-    return resp
-    # return redirect("index")
+    session["token_info"] = token_info
+    list1 = [1, 2, 3, 4, 5, 6]
+    session["random"] = random.choice(list1)
+    # resp = make_response(redirect("index"))
+    # resp.set_cookie('token_info', json.dumps(token_info))
+    # return resp
+    return redirect("index")
+
+@app.route("/test_shit", methods=['GET', 'POST'])
+def test_shit():
+    sp = spotipy.Spotify(auth=session.get('token_info').get('access_token'))
+    # sp = spotipy.Spotify(auth=token_info['access_token'])
+
+    user = sp.me()
+    print(session["token_info"]["access_token"])
+    print(user)
+    return str(session["random"]) + session["token_info"]["access_token"] + "\n" + user["display_name"];
+
+@app.route("/logout", methods=['GET', 'POST'])
+def logout():
+    session.clear()
+    return redirect("/")
 
 
 @app.route("/make_playlist/<prompt>")
 def make_playlist(prompt):
     # session.clear()
-    # session['token_info'], authorized = get_token(session)
-    # print(session['token_info'])
-    # session.modified = True
-    token_info = request.cookies.get('token_info')
-    print(token_info)
+    session['token_info'], authorized = get_token(session)
+    session.modified = True
+    # token_info = request.cookies.get('token_info')
+    # print(token_info)
     # if not authorized:
     #     return redirect('/')
 
@@ -238,8 +254,8 @@ def make_playlist(prompt):
 
     print(songs)
 
-    # sp = spotipy.Spotify(auth=session.get('token_info').get('access_token'))
-    sp = spotipy.Spotify(auth=token_info['access_token'])
+    sp = spotipy.Spotify(auth=session.get('token_info').get('access_token'))
+    # sp = spotipy.Spotify(auth=token_info['access_token'])
 
     user = sp.me()
     print(user)
@@ -265,29 +281,29 @@ def make_playlist(prompt):
     return redirect(url_for('index', success=True))
 
 
-# def get_token(session):
-#     token_valid = False
-#     token_info = session.get("token_info", {})
+def get_token(session):
+    token_valid = False
+    token_info = session.get("token_info", {})
 
-#     # Checking if the session already has a token stored
-#     if not (session.get('token_info', False)):
-#         token_valid = False
-#         return token_info, token_valid
+    # Checking if the session already has a token stored
+    if not (session.get('token_info', False)):
+        token_valid = False
+        return token_info, token_valid
 
-#     # Checking if token has expired
-#     now = int(time.time())
-#     is_token_expired = session.get('token_info').get('expires_at') - now < 60
+    # Checking if token has expired
+    now = int(time.time())
+    is_token_expired = session.get('token_info').get('expires_at') - now < 60
 
-#     # Refreshing token if it has expired
-#     if (is_token_expired):
-#         # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
-#         sp_oauth = spotipy.oauth2.SpotifyOAuth(
-#             client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
-#         token_info = sp_oauth.refresh_access_token(
-#             session.get('token_info').get('refresh_token'))
+    # Refreshing token if it has expired
+    if (is_token_expired):
+        # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
+        sp_oauth = spotipy.oauth2.SpotifyOAuth(
+            client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
+        token_info = sp_oauth.refresh_access_token(
+            session.get('token_info').get('refresh_token'))
 
-#     token_valid = True
-#     return token_info, token_valid
+    token_valid = True
+    return token_info, token_valid
 
 
 if __name__ == "__main__":
