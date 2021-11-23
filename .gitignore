@@ -3,3 +3,4 @@ keys.py
 venv/
 __pycache__
 .env
+node_modules

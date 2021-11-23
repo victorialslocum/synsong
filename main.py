@@ -10,7 +10,6 @@ import random
 import spacy
 import time
 import json
-import os
 from spotipy.oauth2 import SpotifyOAuth
 from itertools import chain
 from flask import Flask, render_template, redirect, request, session, url_for, make_response
@@ -23,7 +22,7 @@ SPOTIPY_CLIENT_SECRET = config('SPOTIPY_CLIENT_SECRET')
 SECRET_KEY = config('SECRET_KEY')
 
 
-REDIRECT_URI = "https://4cfb262b6fae.up.railway.app/callback"
+REDIRECT_URI = "https://synsong-production.up.railway.app/callback"
 API_BASE = 'https://accounts.spotify.com'
 SCOPE = 'playlist-modify-public user-read-private'
 
@@ -43,7 +42,10 @@ def verify():
     else:
         return "<a href=\"" + auth_url + "&show_dialog=true\">Login</a>"
 
-
+@app.route("/home")
+def home():
+    return render_template("home.html")
+    
 @app.route("/index", methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
