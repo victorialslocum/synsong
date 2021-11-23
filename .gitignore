@@ -2,3 +2,4 @@ keys.py
 .cache
 venv/
 __pycache__
+.env

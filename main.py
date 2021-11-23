@@ -10,16 +10,19 @@ import random
 import spacy
 import time
 import json
+import os
 from spotipy.oauth2 import SpotifyOAuth
 from itertools import chain
 from flask import Flask, render_template, redirect, request, session, url_for, make_response
 from flask_oauthlib.client import OAuth, OAuthException
+from decouple import config
 
-import keys
-MUSIXMATCH_API_KEY = keys.MUSIXMATCH_API_KEY
-SPOTIPY_CLIENT_ID = keys.SPOTIPY_CLIENT_ID
-SPOTIPY_CLIENT_SECRET = keys.SPOTIPY_CLIENT_SECRET
-SECRET_KEY = keys.SECRET_KEY
+# import keys
+MUSIXMATCH_API_KEY = config('MUSIXMATCH_API_KEY')
+SPOTIPY_CLIENT_ID = config('SPOTIPY_CLIENT_ID')
+SPOTIPY_CLIENT_SECRET = config('SPOTIPY_CLIENT_SECRET')
+SECRET_KEY = config('SECRET_KEY')
+
 
 REDIRECT_URI = "http://127.0.0.1:5000/callback"
 API_BASE = 'https://accounts.spotify.com'
