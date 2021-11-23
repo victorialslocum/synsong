@@ -31,18 +31,6 @@ oauth = OAuth(app)
 
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
-# @app.after_request
-# def add_header(r):
-#     """
-#     Add headers to both force latest IE rendering engine or Chrome Frame,
-#     and also to cache the rendered page for 10 minutes.
-#     """
-#     r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-#     r.headers["Pragma"] = "no-cache"
-#     r.headers["Expires"] = "0"
-#     r.headers['Cache-Control'] = 'public, max-age=0'
-#     return r
-
 @app.route("/")
 def verify():
     sp_oauth = spotipy.oauth2.SpotifyOAuth(
@@ -69,26 +57,19 @@ def callback():
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     session.clear()
     code = request.args.get('code')
-    print("WEKNOW HEHEHEEH " + code)
     token_info = sp_oauth.get_access_token(code, as_dict=True, check_cache=False)
     # Saving the access token along with all other token related info
     session["token_info"] = token_info
-    list1 = [1, 2, 3, 4, 5, 6]
-    session["random"] = random.choice(list1)
-    # resp = make_response(redirect("index"))
-    # resp.set_cookie('token_info', json.dumps(token_info))
-    # return resp
     return redirect("index")
 
 @app.route("/test_shit", methods=['GET', 'POST'])
 def test_shit():
     sp = spotipy.Spotify(auth=session.get('token_info').get('access_token'))
-    # sp = spotipy.Spotify(auth=token_info['access_token'])
 
     user = sp.me()
     print(session["token_info"]["access_token"])
     print(user)
-    return str(session["random"]) + session["token_info"]["access_token"] + "\n" + user["display_name"];
+    return str(session["random"]) + session["token_info"]["access_token"] + "\n" + user["display_name"]
 
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
@@ -98,14 +79,12 @@ def logout():
 
 @app.route("/make_playlist/<prompt>")
 def make_playlist(prompt):
-    # session.clear()
     session['token_info'], authorized = get_token(session)
     session.modified = True
-    # token_info = request.cookies.get('token_info')
-    # print(token_info)
-    # if not authorized:
-    #     return redirect('/')
 
+    if not authorized:
+        return redirect('/')
+        
     nlp = spacy.load('en_core_web_sm')
 
     def create_title(prompt):
