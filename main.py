@@ -17,14 +17,13 @@ from flask import Flask, render_template, redirect, request, session, url_for, m
 from flask_oauthlib.client import OAuth, OAuthException
 from decouple import config
 
-# import keys
 MUSIXMATCH_API_KEY = config('MUSIXMATCH_API_KEY')
 SPOTIPY_CLIENT_ID = config('SPOTIPY_CLIENT_ID')
 SPOTIPY_CLIENT_SECRET = config('SPOTIPY_CLIENT_SECRET')
 SECRET_KEY = config('SECRET_KEY')
 
 
-REDIRECT_URI = "http://127.0.0.1:5000/callback"
+REDIRECT_URI = "https://4cfb262b6fae.up.railway.app/callback"
 API_BASE = 'https://accounts.spotify.com'
 SCOPE = 'playlist-modify-public user-read-private'
 
