@@ -21,8 +21,8 @@ SPOTIPY_CLIENT_ID = config('SPOTIPY_CLIENT_ID')
 SPOTIPY_CLIENT_SECRET = config('SPOTIPY_CLIENT_SECRET')
 SECRET_KEY = config('SECRET_KEY')
 
-
-REDIRECT_URI = config('REDIRECT_URI')
+REDIRECT_URI="http://127.0.0.1:5000/callback"
+# REDIRECT_URI = config('REDIRECT_URI')
 API_BASE = 'https://accounts.spotify.com'
 SCOPE = 'playlist-modify-public user-read-private'
 
@@ -37,16 +37,11 @@ def home():
     sp_oauth = spotipy.oauth2.SpotifyOAuth(
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
-    print(auth_url)
     if "token_info" in session:
-        return render_template("home.html", login_url="<a href=\"/logout\">log out</a>")
+        return render_template("home.html", login_url="/logout", login_text = "Log out", app_url="/", app_text="Go to app")
     else:
-        return render_template("home.html", login_url= auth_url)
-    
-    # if "token_info" in session:
-    #     return "logged in " + "<a href=\"/logout\">log out</a>"
-    # else:
-    #     return "<a href=\"" + auth_url + "&show_dialog=true\">Login</a>"
+        return render_template("home.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Sign Up")
+
 @app.route("/index", methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -55,6 +50,44 @@ def index():
     else:
         return render_template("index.html", login_url="logout", login_text='Log out')
 
+@app.route("/welcome")
+def welcome():
+    sp_oauth = spotipy.oauth2.SpotifyOAuth(
+        client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
+    auth_url = sp_oauth.get_authorize_url()
+    if "token_info" in session:
+        return redirect(url_for('index'))
+    else:
+        return render_template("getstarted.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Sign Up")
+
+@app.route("/community")
+def community():
+    sp_oauth = spotipy.oauth2.SpotifyOAuth(
+        client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
+    auth_url = sp_oauth.get_authorize_url()
+    if "token_info" in session:
+        return render_template("community.html", login_url="/logout", login_text = "Log out", app_url="/", app_text="Go to app")
+    else:
+        return render_template("community.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Sign Up")
+@app.route("/features")
+def features():
+    sp_oauth = spotipy.oauth2.SpotifyOAuth(
+        client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
+    auth_url = sp_oauth.get_authorize_url()
+    if "token_info" in session:
+        return render_template("features.html", login_url="/logout", login_text = "Log out", app_url="/", app_text="Go to app")
+    else:
+        return render_template("features.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Sign Up")
+
+@app.route("/howitworks")
+def howitworks():
+    sp_oauth = spotipy.oauth2.SpotifyOAuth(
+        client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
+    auth_url = sp_oauth.get_authorize_url()
+    if "token_info" in session:
+        return render_template("howitworks.html", login_url="/logout", login_text = "Log out", app_url="/", app_text="Go to app")
+    else:
+        return render_template("howitworks.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Sign Up")
 
 @app.route("/callback")
 def callback():
@@ -88,7 +121,10 @@ def make_playlist(prompt):
     session.modified = True
 
     if not authorized:
-        return redirect('/')
+        sp_oauth = spotipy.oauth2.SpotifyOAuth(
+        client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
+        auth_url = sp_oauth.get_authorize_url()
+        return redirect('/', success = False, login_url=auth_url, login_text = "Log in")
         
     nlp = spacy.load('en_core_web_sm')
 

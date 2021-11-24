@@ -13,14 +13,14 @@
   <body>
     <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
-        <a class="navbar-item" href="https://synsong.app">
+        <a class="navbar-item" href="/">
           <a class="button is-white"> </a>
         </a>
       </div>
 
       <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-          <a class="navbar-item" href="https://synsong.app"> Home </a>
+          <a class="navbar-item" href="/"> Home </a>
 
           <a class="navbar-item" href="/community"> Community </a>
 
@@ -57,7 +57,12 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
-              {% block loginbuttons %}{% endblock %}
+              <a class="button is-primary" href="{{ app_url }}">
+                <strong>{{ app_text }}</strong>
+              </a>
+              <a class="button is-light" href="{{ login_url }}">
+                {{ login_text }}
+              </a>
             </div>
           </div>
         </div>
@@ -75,19 +80,19 @@
         <nav class="tabs is-boxed is-fullwidth">
           <div class="container">
             <ul>
-              <li class="is-active">
-                <a href="/overview">Overview</a>
+              <li {% block active_home %}{% endblock %}>
+                <a href="/">Overview</a>
               </li>
-              <li>
+              <li {% block active_hiw %}{% endblock %}>
                 <a href="/howitworks">How it works</a>
               </li>
-              <li>
+              <li {% block active_feat %}{% endblock %}>
                 <a href="/features">Features</a>
               </li>
-              <li>
+              <li {% block active_com %}{% endblock %}>
                 <a href="/community">Community</a>
               </li>
-              <li>
+              <li {% block active_wel %}{% endblock %}>
                 <a href="/welcome">Get Started</a>
               </li>
             </ul>

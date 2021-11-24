@@ -13,14 +13,14 @@
   <body>
     <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
-        <a class="navbar-item" href="https://synsong.app">
+        <a class="navbar-item" href="/">
           <a class="button is-white"> </a>
         </a>
       </div>
 
       <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-          <a class="navbar-item" href="https://synsong.app"> Home </a>
+          <a class="navbar-item" href="/"> Home </a>
 
           <a class="navbar-item" href="/community"> Community </a>
 
@@ -67,7 +67,7 @@
         </div>
       </div>
     </nav>
-    <section class="hero is-primary is-small">
+    <section class="hero is-primary is-medium mb-6">
       <div class="hero-body">
         <div class="container has-text-centered">
           <p class="title">Input a prompt and edit your playlist settings</p>
@@ -77,43 +77,43 @@
     <div class="container is-max-desktop has-text-centered">
       <form action="" method="post" name="prompt" id="prompt">
         <div class="columns">
-          <div class="column is-half">
+          <div class="column p-5">
             <div class="field-label is-medium has-text-left pb-3">
               <label class="label" for="prompt">Prompt</label>
             </div>
             <div class="field-body">
               <div class="field">
-                <input
-                  class="input"
+                <textarea
+                  class="textarea is-primary"
                   type="text"
-                  placeholder="Text input"
+                  placeholder="Input your prompt here"
                   name="prompt"
                   rows="7"
-                />
+                  name="prompt"
+                ></textarea>
               </div>
             </div>
           </div>
-          <div class="column">
-            {#
+          <div class="column p-5">
             <div class="field-label is-medium has-text-left pb-3">
-              <label class="label">Genre</label>
+              <label class="label" for="prompt">Genre</label>
             </div>
             <div class="field is-grouped is-grouped-multiline">
-              <div class="select is-multiple">
-                <select multiple size="1">
-                  <option value="Coming">Coming</option>
-                  <option value="Soon">Soon</option>
-                </select>
-              </div>
+              <p class="control">
+                <a class="button is-primary is-outlined"> Coming </a>
+              </p>
+              <p class="control">
+                <a class="button is-primary is-outlined"> Soon </a>
+              </p>
             </div>
-            #}
           </div>
         </div>
+        <div class="block pb-2"></div>
         <input
-          class="button btn-primary"
+          class="button is-primary is-medium"
           type="submit"
           formmethod="post"
-          value="submit"
+          value="Make your playlist"
         />
       </form>
       {#
