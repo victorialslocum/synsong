@@ -68,66 +68,39 @@
         </div>
       </div>
     </nav>
-    <div class="form">
-      <form action="" method="post">
-        <label for="prompt"> Prompt: </label><br />
-        <input class="input" type="text" name="prompt" /><br />
-        <input class="button" type="submit" value="submit" />
-        <div class="field is-horizontal">
-          <div class="field-label is-normal">
-            <label class="label">Prompt</label>
-          </div>
-          <div class="field-body">
-            <div class="field">
-              <textarea class="textarea" placeholder="Type your prompt here" name="prompt"rows="7"></textarea>
-            </div>
-          </div>
-          <div class="field-label is-normal">
-            <label class="label">Genre</label>
-          </div>
-          <div class="field is-grouped is-grouped-multiline">
-            <p class="control">
-              <a class="button"> One </a>
-            </p>
-            <p class="control">
-              <a class="button"> Two </a>
-            </p>
-            <p class="control">
-              <a class="button"> Three </a>
-            </p>
-            <p class="control">
-              <a class="button"> Four </a>
-            </p>
-            <p class="control">
-              <a class="button"> Five </a>
-            </p>
-            <p class="control">
-              <a class="button"> Six </a>
-            </p>
-            <p class="control">
-              <a class="button"> Seven </a>
-            </p>
-            <p class="control">
-              <a class="button"> Eight </a>
-            </p>
-            <p class="control">
-              <a class="button"> Nine </a>
-            </p>
-            <p class="control">
-              <a class="button"> Ten </a>
-            </p>
-            <p class="control">
-              <a class="button"> Eleven </a>
-            </p>
-            <p class="control">
-              <a class="button"> Twelve </a>
-            </p>
-            <p class="control">
-              <a class="button"> Thirteen </a>
-            </p>
-          </div>
+
+    <section class="hero is-primary is-medium">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <p class="title">Synsong</p>
+          <p class="subtitle">The prompt-based playlist generator</p>
         </div>
-      </form>
-    </div>
+      </div>
+      <div class="hero-foot">
+        <nav class="tabs is-boxed is-fullwidth">
+          <div class="container">
+            <ul>
+              <li class="is-active">
+                <a href="/overview">Overview</a>
+              </li>
+              <li>
+                <a href="/howitworks">How it works</a>
+              </li>
+              <li>
+                <a href="/features">Features</a>
+              </li>
+              <li>
+                <a href="/community">Community</a>
+              </li>
+              <li>
+                <a href="/welcome">Get Started</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </section>
+
+    {% block content %}{% endblock %}
   </body>
 </html>

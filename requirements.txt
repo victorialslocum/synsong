@@ -6,14 +6,15 @@ certifi==2021.10.8
 charset-normalizer==2.0.7
 click==7.1.2
 cymem==2.0.6
+en-core-web-sm==3.2.0
 Flask==1.1.2
 Flask-OAuthlib==0.9.6
 gunicorn==20.0.4
 idna==3.3
 itsdangerous==1.1.0
-Jinja2==2.11.3
+Jinja2==3.0.3
 langcodes==3.3.0
-MarkupSafe==1.1.1
+MarkupSafe==2.0.1
 murmurhash==1.0.6
 numpy==1.21.4
 oauthlib==2.1.0
@@ -24,6 +25,7 @@ pycodestyle==2.8.0
 pydantic==1.8.2
 pyparsing==3.0.6
 python-decouple==3.5
+python-dotenv==0.19.2
 requests==2.26.0
 requests-oauthlib==1.1.0
 six==1.16.0

@@ -33,18 +33,14 @@ oauth = OAuth(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 @app.route("/")
-def verify():
+def home():
     sp_oauth = spotipy.oauth2.SpotifyOAuth(
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return "logged in " + "<a href=\"/logout\">log out</a>"
+        return render_template("home.html", login_url="logout", login_text='Log out')
     else:
-        return "<a href=\"" + auth_url + "&show_dialog=true\">Login</a>"
-
-@app.route("/home")
-def home():
-    return render_template("home.html")
+        return render_template("home.html", login_url=auth_url, login_text='Log in')
     
 @app.route("/index", methods=['GET', 'POST'])
 def index():

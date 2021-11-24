@@ -4,3 +4,5 @@ venv/
 __pycache__
 .env
 node_modules
+css
+sass
