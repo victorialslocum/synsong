@@ -22,7 +22,7 @@ SPOTIPY_CLIENT_SECRET = config('SPOTIPY_CLIENT_SECRET')
 SECRET_KEY = config('SECRET_KEY')
 
 
-REDIRECT_URI = "https://synsong-production.up.railway.app/callback"
+REDIRECT_URI = config('REDIRECT_URI')
 API_BASE = 'https://accounts.spotify.com'
 SCOPE = 'playlist-modify-public user-read-private'
 
@@ -37,18 +37,23 @@ def home():
     sp_oauth = spotipy.oauth2.SpotifyOAuth(
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
+    print(auth_url)
     if "token_info" in session:
-        return render_template("home.html", login_url="logout", login_text='Log out')
+        return render_template("home.html", login_url="<a href=\"/logout\">log out</a>")
     else:
-        return render_template("home.html", login_url=auth_url, login_text='Log in')
+        return render_template("home.html", login_url= auth_url)
     
+    # if "token_info" in session:
+    #     return "logged in " + "<a href=\"/logout\">log out</a>"
+    # else:
+    #     return "<a href=\"" + auth_url + "&show_dialog=true\">Login</a>"
 @app.route("/index", methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         prompt = request.form['prompt']
         return redirect(url_for('make_playlist', prompt=prompt))
     else:
-        return render_template("index.html")
+        return render_template("index.html", login_url="logout", login_text='Log out')
 
 
 @app.route("/callback")
@@ -77,7 +82,7 @@ def logout():
     return redirect("/")
 
 
-@app.route("/make_playlist/<prompt>")
+@app.route("/make_playlist/<prompt>", methods=['GET', 'POST'])
 def make_playlist(prompt):
     session['token_info'], authorized = get_token(session)
     session.modified = True
@@ -257,7 +262,7 @@ def make_playlist(prompt):
     sp.user_playlist_add_tracks(
         user['id'], playlist_id, track_id_list, position=None)
 
-    return redirect(url_for('index', success=True))
+    return redirect(url_for('index', success=True, login_url="logout", login_text='Log out'))
 
 
 def get_token(session):

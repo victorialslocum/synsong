@@ -1,4 +1,9 @@
-{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block content
-%}
+{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block
+loginbuttons %}<a class="button is-primary" href="{{ login_url }}">
+  <strong>Sign up</strong>
+</a>
+<a class="button is-light" href="{{ login_url }}"> {{ login_text }} </a>{%
+endblock %}{% block herotitle %}Synsong{% endblock %} {% block subtitle %}The
+prompt-based playlist generator{% endblock %}{% block content %}
 <h1 class="title is-1">Home</h1>
 {% endblock %}

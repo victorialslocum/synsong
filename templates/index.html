@@ -53,7 +53,6 @@
             </div>
           </div>
         </div>
-
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
@@ -68,66 +67,62 @@
         </div>
       </div>
     </nav>
-    <div class="form">
+    <section class="hero is-primary is-small">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <p class="title">Input a prompt and edit your playlist settings</p>
+        </div>
+      </div>
+    </section>
+    <div class="container is-max-desktop has-text-centered">
+      <form action="" method="post" name="prompt" id="prompt">
+        <div class="columns">
+          <div class="column is-half">
+            <div class="field-label is-medium has-text-left pb-3">
+              <label class="label" for="prompt">Prompt</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <input
+                  class="input"
+                  type="text"
+                  placeholder="Text input"
+                  name="prompt"
+                  rows="7"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            {#
+            <div class="field-label is-medium has-text-left pb-3">
+              <label class="label">Genre</label>
+            </div>
+            <div class="field is-grouped is-grouped-multiline">
+              <div class="select is-multiple">
+                <select multiple size="1">
+                  <option value="Coming">Coming</option>
+                  <option value="Soon">Soon</option>
+                </select>
+              </div>
+            </div>
+            #}
+          </div>
+        </div>
+        <input
+          class="button btn-primary"
+          type="submit"
+          formmethod="post"
+          value="submit"
+        />
+      </form>
+      {#
       <form action="" method="post">
         <label for="prompt"> Prompt: </label><br />
         <input class="input" type="text" name="prompt" /><br />
         <input class="button" type="submit" value="submit" />
-        <div class="field is-horizontal">
-          <div class="field-label is-normal">
-            <label class="label">Prompt</label>
-          </div>
-          <div class="field-body">
-            <div class="field">
-              <textarea class="textarea" placeholder="Type your prompt here" name="prompt"rows="7"></textarea>
-            </div>
-          </div>
-          <div class="field-label is-normal">
-            <label class="label">Genre</label>
-          </div>
-          <div class="field is-grouped is-grouped-multiline">
-            <p class="control">
-              <a class="button"> One </a>
-            </p>
-            <p class="control">
-              <a class="button"> Two </a>
-            </p>
-            <p class="control">
-              <a class="button"> Three </a>
-            </p>
-            <p class="control">
-              <a class="button"> Four </a>
-            </p>
-            <p class="control">
-              <a class="button"> Five </a>
-            </p>
-            <p class="control">
-              <a class="button"> Six </a>
-            </p>
-            <p class="control">
-              <a class="button"> Seven </a>
-            </p>
-            <p class="control">
-              <a class="button"> Eight </a>
-            </p>
-            <p class="control">
-              <a class="button"> Nine </a>
-            </p>
-            <p class="control">
-              <a class="button"> Ten </a>
-            </p>
-            <p class="control">
-              <a class="button"> Eleven </a>
-            </p>
-            <p class="control">
-              <a class="button"> Twelve </a>
-            </p>
-            <p class="control">
-              <a class="button"> Thirteen </a>
-            </p>
-          </div>
-        </div>
       </form>
+      #}
     </div>
   </body>
 </html>

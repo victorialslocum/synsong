@@ -57,12 +57,7 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
-              <a class="button is-primary" href="{{ login_url }}">
-                <strong>Sign up</strong>
-              </a>
-              <a class="button is-light" href="{{ login_url }}">
-                {{ login_text }}
-              </a>
+              {% block loginbuttons %}{% endblock %}
             </div>
           </div>
         </div>
@@ -72,8 +67,8 @@
     <section class="hero is-primary is-medium">
       <div class="hero-body">
         <div class="container has-text-centered">
-          <p class="title">Synsong</p>
-          <p class="subtitle">The prompt-based playlist generator</p>
+          <p class="title">{% block herotitle %}{% endblock %}</p>
+          <p class="subtitle">{% block subtitle %}{% endblock %}</p>
         </div>
       </div>
       <div class="hero-foot">
