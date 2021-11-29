@@ -1,36 +1,35 @@
-{% extends 'base.html' %} {% block title %}How it works{% endblock %} {% block
+{% extends 'base.html' %} {% block title %}About{% endblock %} {% block
 navbarend%} {{ super() }} {% endblock %} {% block hero %} {{ super() }}{%
-endblock %} {% block active_hiw
-%}class="is-active"{% endblock %}{% block content %}
-<div class="columns m-3">
-  <div class="column m-6">
-    <h1 class="title is-3 pb-3">Welcome!</h1>
-    <h5 class="subtitle is-5">So excited that you're here</h1>
-    <p>Synsong is my current WIP </p>
-  </div>
-  <div class="column m-6">
-    <div class="card">
-      <div class="card-image">
-        <figure class="image is-4by3">
-          <img
-            src="https://bulma.io/images/placeholders/1280x960.png"
-            alt="Placeholder image"
-          />
-        </figure>
-      </div>
-      <div class="card-content">
-        <div class="media">
-          <div class="media-content">
-            <p class="title is-4">Victoria</p>
-            <p class="subtitle is-6">Creator of Synsong</p>
-          </div>
+endblock %} {% block active_hiw %}class="is-active"{% endblock %}{% block
+content %}
+<div class="container is-max-widescreen">
+  <div class="columns">
+    <div class="column m-6">
+      <div class="block m-6"></div>
+      <h3 class="title is-2"></h3>
+    </div>
+    <div class="column m-6">
+      <div class="card">
+        <div class="card-image">
+          <figure class="image">
+            <img src="/static/media/Victoria3.jpg" alt="Victoria" />
+          </figure>
         </div>
+        <div class="card-content">
+          <div class="media">
+            <div class="media-content">
+              <p class="title is-4">Victoria</p>
+              <p class="subtitle is-6">Creator of Synsong</p>
+            </div>
+          </div>
 
-        <div class="content">
-          Constantly learning through doing, check me out on
-          <a href="#">Twitter</a>, <a href="#">GitHub</a>, and
-          <a href="#">LinkedIn</a>!!
-          <br />
+          <div class="content">
+            Constantly learning through doing, check me out on
+            <a href="#">Twitter</a>, <a href="#">GitHub</a>, and
+            <a href="#">LinkedIn</a>!!
+            <br />
+            <a class="button is-primary mt-3" href="#">Buy me a coffee!</a>
+          </div>
         </div>
       </div>
     </div>
