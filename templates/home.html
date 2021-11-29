@@ -1,6 +1,108 @@
-{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block herotitle
-%}Synsong{% endblock %} {% block subtitle %}The prompt-based playlist
-generator{% endblock %}{% block active_home %}class="is-active"{% endblock %}{%
-block content %}
-<h1 class="title is-1">Home</h1>
+{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block
+navbarend%} {{ super() }} {% endblock %} {% block hero %} {{ super() }}{%
+endblock %} {% block active_home %}class="is-active"{% endblock %}{% block
+content %}
+<div class="container is-max-widescreen">
+  <div class="block has-text-centered p-6 mt-6">
+    <h1 class="title is-2">See what Synsong can do</h1>
+    <ion-icon
+      class="icon is-medium has-text-primary"
+      name="arrow-down-outline"
+    ></ion-icon>
+  </div>
+  <div class="columns m-3">
+    <div class="column m-6">
+      <div class="content">
+        <p class="is-size-5 has-text-weight-bold">Prompt:</p>
+        <div class="content">
+          <textarea
+            class="textarea is-primary has-fixed-size"
+            type="text"
+            rows="3"
+            placeholder="Text input"
+            readonly
+          >
+Sing like no one’s listening, love like you’ve never been hurt, dance like nobody’s watching, and live like it’s heaven on earth.</textarea
+          >
+        </div>
+        <p class="is-size-5 has-text-weight-bold">Genre:</p>
+        <div class="field is-grouped is-grouped-multiline">
+          <p class="control">
+            <a class="button is-primary"> Coming </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary is-outlined"> Soon </a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="column m-6">
+      <div
+        style="
+          border-radius: 10px;
+          overflow: hidden;
+          width: 100%;
+          display: flex;
+          height: 100%;
+        "
+      >
+        <iframe
+          src="https://open.spotify.com/embed/playlist/18u2s6QEvCe6RYF0H4JTEQ?utm_source=generator&theme=0"
+          width="100%"
+          height="380"
+          frameborder="0"
+          allowfullscreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+  <div class="columns m-3">
+    <div class="column m-6">
+      <div
+        style="
+          border-radius: 10px;
+          overflow: hidden;
+          width: 100%;
+          display: flex;
+          height: 100%;
+        "
+      >
+        <iframe
+          src="https://open.spotify.com/embed/playlist/3k3kfJW1xld4oDzIMO8oVw?utm_source=generator&theme=0"
+          width="100%"
+          height="380"
+          frameborder="0"
+          allowfullscreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        ></iframe>
+      </div>
+    </div>
+    <div class="column m-6">
+      <div class="content">
+        <p class="is-size-5 has-text-weight-bold">Prompt:</p>
+        <div class="content">
+          <textarea
+            class="textarea is-primary has-fixed-size"
+            type="text"
+            rows="2"
+            placeholder="Text input"
+            readonly
+          >
+Potatoes are great food for worms and bugs in the ground.</textarea
+          >
+        </div>
+        <p class="is-size-5 has-text-weight-bold">Genre:</p>
+        <div class="field is-grouped is-grouped-multiline">
+          <p class="control">
+            <a class="button is-primary"> Coming </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary is-outlined"> Soon </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

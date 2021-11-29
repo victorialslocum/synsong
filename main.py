@@ -21,8 +21,7 @@ SPOTIPY_CLIENT_ID = config('SPOTIPY_CLIENT_ID')
 SPOTIPY_CLIENT_SECRET = config('SPOTIPY_CLIENT_SECRET')
 SECRET_KEY = config('SECRET_KEY')
 
-REDIRECT_URI="http://127.0.0.1:5000/callback"
-# REDIRECT_URI = config('REDIRECT_URI')
+REDIRECT_URI = config('REDIRECT_URI')
 API_BASE = 'https://accounts.spotify.com'
 SCOPE = 'playlist-modify-public user-read-private'
 
@@ -38,9 +37,9 @@ def home():
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return render_template("home.html", login_url="/logout", login_text = "Log out", app_url="/", app_text="Go to app")
+        return render_template("home.html", login_url="/logout", login_text = "Log out", app_url="/index", app_text="Go to app")
     else:
-        return render_template("home.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Sign Up")
+        return render_template("home.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Get started")
 
 @app.route("/index", methods=['GET', 'POST'])
 def index():
@@ -48,17 +47,7 @@ def index():
         prompt = request.form['prompt']
         return redirect(url_for('make_playlist', prompt=prompt))
     else:
-        return render_template("index.html", login_url="logout", login_text='Log out')
-
-@app.route("/welcome")
-def welcome():
-    sp_oauth = spotipy.oauth2.SpotifyOAuth(
-        client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
-    auth_url = sp_oauth.get_authorize_url()
-    if "token_info" in session:
-        return redirect(url_for('index'))
-    else:
-        return render_template("getstarted.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Sign Up")
+        return render_template("index.html", login_url="logout", login_text='Log out', app_url="/index", app_text="Go to app")
 
 @app.route("/community")
 def community():
@@ -66,28 +55,28 @@ def community():
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return render_template("community.html", login_url="/logout", login_text = "Log out", app_url="/", app_text="Go to app")
+        return render_template("community.html", login_url="/logout", login_text = "Log out", app_url="/index", app_text="Go to app")
     else:
-        return render_template("community.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Sign Up")
+        return render_template("community.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Get started")
 @app.route("/features")
 def features():
     sp_oauth = spotipy.oauth2.SpotifyOAuth(
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return render_template("features.html", login_url="/logout", login_text = "Log out", app_url="/", app_text="Go to app")
+        return render_template("features.html", login_url="/logout", login_text = "Log out", app_url="/index", app_text="Go to app")
     else:
-        return render_template("features.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Sign Up")
+        return render_template("features.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Get started")
 
-@app.route("/howitworks")
-def howitworks():
+@app.route("/about")
+def about():
     sp_oauth = spotipy.oauth2.SpotifyOAuth(
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return render_template("howitworks.html", login_url="/logout", login_text = "Log out", app_url="/", app_text="Go to app")
+        return render_template("about.html", login_url="/logout", login_text = "Log out", app_url="/index", app_text="Go to app")
     else:
-        return render_template("howitworks.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Sign Up")
+        return render_template("about.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Get started")
 
 @app.route("/callback")
 def callback():
@@ -107,7 +96,7 @@ def test_shit():
     user = sp.me()
     print(session["token_info"]["access_token"])
     print(user)
-    return str(session["random"]) + session["token_info"]["access_token"] + "\n" + user["display_name"]
+    return user["id"]
 
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
@@ -258,8 +247,8 @@ def make_playlist(prompt):
     song_dicts = []
 
     for list in word_list:
-        parameter1 = parameters(list, len(list)*2, 'none')
-        parameter2 = parameters(list, len(list)*2, 'desc')
+        parameter1 = parameters(list, len(list), 'none')
+        parameter2 = parameters(list, len(list), 'desc')
 
         song_dicts.append(get_song_list(parameter1))
         song_dicts.append(get_song_list(parameter2))
@@ -291,8 +280,10 @@ def make_playlist(prompt):
             track_id = response['tracks']['items'][0]['id']
             track_id_list.append(track_id)
 
+
+    description = prompt + " ❤ synsong.app"
     playlist = sp.user_playlist_create(
-        user['id'], title, public=True, collaborative=False, description=prompt)
+        user['id'], title, public=True, collaborative=False, description=description)
 
     playlist_id = playlist['id']
     sp.user_playlist_add_tracks(

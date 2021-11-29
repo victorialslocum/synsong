@@ -1,128 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% block title %}{% endblock %}</title>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{{ url_for('static', filename='/mystyles.css') }}"
-    />
-  </head>
-  <body>
-    <nav class="navbar" role="navigation" aria-label="main navigation">
-      <div class="navbar-brand">
-        <a class="navbar-item" href="/">
-          <a class="button is-white"> </a>
-        </a>
-      </div>
-
-      <div id="navbarBasicExample" class="navbar-menu">
-        <div class="navbar-start">
-          <a class="navbar-item" href="/"> Home </a>
-
-          <a class="navbar-item" href="/community"> Community </a>
-
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link"> More </a>
-
-            <div class="navbar-dropdown">
-              <a
-                class="navbar-item"
-                href="https://github.com/victoriaslocum752/synsong"
-              >
-                GitHub
-              </a>
-              <a class="navbar-item" href="https://victoriaslocum.com">
-                About the Creator
-              </a>
-              <a
-                class="navbar-item"
-                href="https://open.spotify.com/user/qz80th8go5difpk5t66gfyqlo?si=00e56d76745946ff"
-              >
-                Synsong on Spotify
-              </a>
-              <hr class="navbar-divider" />
-              <a
-                class="navbar-item"
-                href="https://github.com/victoriaslocum752/synsong/issues"
-              >
-                Report an issue
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="navbar-end">
-          <div class="navbar-item">
-            <div class="buttons">
-              <a class="button is-primary" href="{{ login_url }}">
-                <strong>Sign up</strong>
-              </a>
-              <a class="button is-light" href="{{ login_url }}">
-                {{ login_text }}
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </nav>
-    <section class="hero is-primary is-medium mb-6">
-      <div class="hero-body">
-        <div class="container has-text-centered">
-          <p class="title">Input a prompt and edit your playlist settings</p>
-        </div>
-      </div>
-    </section>
-    <div class="container is-max-desktop has-text-centered">
-      <form action="" method="post" name="prompt" id="prompt">
-        <div class="columns">
-          <div class="column p-5">
-            <div class="field-label is-medium has-text-left pb-3">
-              <label class="label" for="prompt">Prompt</label>
-            </div>
-            <div class="field-body">
-              <div class="field">
-                <textarea
-                  class="textarea is-primary"
-                  type="text"
-                  placeholder="Input your prompt here"
-                  name="prompt"
-                  rows="7"
-                  name="prompt"
-                ></textarea>
-              </div>
-            </div>
-          </div>
-          <div class="column p-5">
-            <div class="field-label is-medium has-text-left pb-3">
-              <label class="label" for="prompt">Genre</label>
-            </div>
-            <div class="field is-grouped is-grouped-multiline">
-              <p class="control">
-                <a class="button is-primary is-outlined"> Coming </a>
-              </p>
-              <p class="control">
-                <a class="button is-primary is-outlined"> Soon </a>
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="block pb-2"></div>
-        <input
-          class="button is-primary is-medium"
-          type="submit"
-          formmethod="post"
-          value="Make your playlist"
-        />
-      </form>
-      {#
-      <form action="" method="post">
-        <label for="prompt"> Prompt: </label><br />
-        <input class="input" type="text" name="prompt" /><br />
-        <input class="button" type="submit" value="submit" />
-      </form>
-      #}
+{% extends 'base.html' %} {% block title %}Synsong{% endblock %} {% block
+navbarend%}
+<div class="navbar-end">
+  <div class="navbar-item">
+    <div class="buttons">
+      <a class="button is-light" href="{{ login_url }}"> {{ login_text }} </a>
     </div>
-  </body>
-</html>
+  </div>
+</div>
+{% endblock %} {% block hero %}
+<section class="hero is-primary is-small mb-6">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <p class="title">Input a prompt and edit your playlist settings</p>
+    </div>
+  </div>
+</section>
+{% endblock %} {% block content %}
+<div class="container is-max-desktop has-text-centered">
+  <form action="" method="post" name="prompt" id="prompt">
+    <div class="columns">
+      <div class="column p-5">
+        <div class="field-label is-medium has-text-left pb-3">
+          <label class="label" for="prompt">Prompt</label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <textarea
+              class="textarea is-primary"
+              type="text"
+              placeholder="A sentence, a quote, a paragraph..."
+              name="prompt"
+              rows="7"
+              name="prompt"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="column p-5">
+        <div class="field-label is-medium has-text-left pb-3">
+          <label class="label" for="prompt">Genre</label>
+        </div>
+        <div class="field is-grouped is-grouped-multiline">
+          <p class="control">
+            <a class="button is-primary is-outlined"> Coming </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary is-outlined"> Soon </a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="block pb-2"></div>
+    <input
+      class="button is-primary is-medium"
+      type="submit"
+      formmethod="post"
+      value="Make your playlist"
+    />
+  </form>
+  {#
+  <form action="" method="post">
+    <label for="prompt"> Prompt: </label><br />
+    <input class="input" type="text" name="prompt" /><br />
+    <input class="button" type="submit" value="submit" />
+  </form>
+  #}
+</div>
+{% endblock %}

@@ -9,6 +9,15 @@
       type="text/css"
       href="{{ url_for('static', filename='/mystyles.css') }}"
     />
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+    ></script>
+    <script src="/script.js"></script>
   </head>
   <body>
     <nav class="navbar" role="navigation" aria-label="main navigation">
@@ -18,7 +27,7 @@
         </a>
       </div>
 
-      <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-menu">
         <div class="navbar-start">
           <a class="navbar-item" href="/"> Home </a>
 
@@ -54,6 +63,7 @@
           </div>
         </div>
 
+        {% block navbarend%}
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
@@ -66,14 +76,22 @@
             </div>
           </div>
         </div>
+        {% endblock %}
       </div>
     </nav>
 
+    {% block hero %}
     <section class="hero is-primary is-medium">
       <div class="hero-body">
         <div class="container has-text-centered">
-          <p class="title">{% block herotitle %}{% endblock %}</p>
-          <p class="subtitle">{% block subtitle %}{% endblock %}</p>
+          <p class="title is-1 pb-3">Synsong</p>
+          <p class="subtitle is-4">The prompt-based playlist generator</p>
+          <a
+            class="button is-primary is-inverted is-medium"
+            href="{{ app_url }}"
+          >
+            <strong>{{ app_text }}</strong>
+          </a>
         </div>
       </div>
       <div class="hero-foot">
@@ -84,7 +102,7 @@
                 <a href="/">Overview</a>
               </li>
               <li {% block active_hiw %}{% endblock %}>
-                <a href="/howitworks">How it works</a>
+                <a href="/about">About</a>
               </li>
               <li {% block active_feat %}{% endblock %}>
                 <a href="/features">Features</a>
@@ -92,15 +110,11 @@
               <li {% block active_com %}{% endblock %}>
                 <a href="/community">Community</a>
               </li>
-              <li {% block active_wel %}{% endblock %}>
-                <a href="/welcome">Get Started</a>
-              </li>
             </ul>
           </div>
         </nav>
       </div>
     </section>
-
-    {% block content %}{% endblock %}
+    {% endblock %} {% block content %}{% endblock %}
   </body>
 </html>
