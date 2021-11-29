@@ -47,7 +47,7 @@ def generator():
         prompt = request.form['prompt']
         return redirect(url_for('make_playlist', prompt=prompt))
     else:
-        return render_template("generator.html", login_url="logout", login_text='Log out', app_url="/generator", app_text="Go to app")
+        return render_template("generator.html", login_url="/logout", login_text='Log out', app_url="/generator", app_text="Go to app")
 
 @app.route("/community")
 def community():
@@ -106,7 +106,7 @@ def logout():
 @app.route("/success/<prompt>/<playlist_id>")
 def success(prompt, playlist_id):
     
-    return render_template("success.html", success=True, playlist_id = playlist_id, prompt = prompt, login_url="logout", login_text='Log out')
+    return render_template("success.html", success=True, playlist_id = playlist_id, prompt = prompt, login_url="/logout", login_text='Log out')
 
 @app.route("/make_playlist/<prompt>", methods=['GET', 'POST'])
 def make_playlist(prompt):
@@ -293,7 +293,7 @@ def make_playlist(prompt):
     sp.user_playlist_add_tracks(
         user['id'], playlist_id, track_id_list, position=None)
 
-    return redirect(url_for('success', success=True, prompt = prompt, playlist_id = playlist_id, login_url="logout", login_text='Log out'))
+    return redirect(url_for('success', success=True, prompt = prompt, playlist_id = playlist_id, login_url="/logout", login_text='Log out'))
 
 
 def get_token(session):
