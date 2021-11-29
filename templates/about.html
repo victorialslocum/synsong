@@ -3,12 +3,43 @@ navbarend%} {{ super() }} {% endblock %} {% block hero %} {{ super() }}{%
 endblock %} {% block active_hiw %}class="is-active"{% endblock %}{% block
 content %}
 <div class="container is-max-widescreen">
-  <div class="columns">
-    <div class="column m-6">
-      <div class="block m-6"></div>
-      <h3 class="title is-2"></h3>
+  <div class="columns mt-6">
+    <div class="column m-6 is-half">
+      <div class="block m-4"></div>
+      <h3 class="title is-4">How Synsong was made</h3>
+      <div class="block">
+        The backend of Synsong is made with 🐍
+        <a href="https://www.python.org/">Python</a>.
+      </div>
+      <div class="block">
+        The app starts by taking your prompt and analyzing it through
+        <a href="https://spacy.io/">spaCy</a>, picking about important phrases
+        to search for and making a cool title.
+      </div>
+      <div class="block">
+        It then searches for these phrases using the
+        <a href="https://developer.musixmatch.com/">MusixMatch API</a> to come
+        up with songs that match the prompt and genres inputted.
+      </div>
+      <div class="block">
+        By logging in with your Spotify, you allow
+        <a href="https://spotipy.readthedocs.io/en/2.19.0/#">Spotipy</a> to make
+        a playlist for you on your account that has all the songs in it through
+        the <a href="https://developer.spotify.com/">Spotify API</a>.
+      </div>
+      <div class="block">
+        The website is made with the
+        <a href="https://flask.palletsprojects.com/en/2.0.x/">Flask</a> Python
+        web framework and the <a href="https://bulma.io/">Bulma</a> CSS
+        framework, and then deployed using
+        <a href="https://railway.app/">Railway</a>.
+      </div>
+      <div class="block has-text-weight-semibold">
+        I'm so happy you're here at
+        <a href="https://synsong.app">synsong.app</a>!
+      </div>
     </div>
-    <div class="column m-6">
+    <div class="column m-2">
       <div class="card">
         <div class="card-image">
           <figure class="image">
@@ -22,13 +53,19 @@ content %}
               <p class="subtitle is-6">Creator of Synsong</p>
             </div>
           </div>
-
           <div class="content">
             Constantly learning through doing, check me out on
-            <a href="#">Twitter</a>, <a href="#">GitHub</a>, and
-            <a href="#">LinkedIn</a>!!
+            <a href="https://twitter.com/VictoriaSlocum3">Twitter</a>,
+            <a href="https://github.com/victoriaslocum752">GitHub</a>, and
+            <a href="https://www.linkedin.com/in/victoria-slocum-3b4471183/"
+              >LinkedIn</a
+            >!!
             <br />
-            <a class="button is-primary mt-3" href="#">Buy me a coffee!</a>
+            <a
+              class="button is-primary mt-3"
+              href="https://www.buymeacoffee.com/victoriaslocum"
+              >Buy me a coffee!</a
+            >
           </div>
         </div>
       </div>

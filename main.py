@@ -37,17 +37,17 @@ def home():
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return render_template("home.html", login_url="/logout", login_text = "Log out", app_url="/index", app_text="Go to app")
+        return render_template("home.html", login_url="/logout", login_text = "Log out", app_url="/generator", app_text="Go to app")
     else:
         return render_template("home.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Get started")
 
-@app.route("/index", methods=['GET', 'POST'])
-def index():
+@app.route("/generator", methods=['GET', 'POST'])
+def generator():
     if request.method == 'POST':
         prompt = request.form['prompt']
         return redirect(url_for('make_playlist', prompt=prompt))
     else:
-        return render_template("index.html", login_url="logout", login_text='Log out', app_url="/index", app_text="Go to app")
+        return render_template("generator.html", login_url="logout", login_text='Log out', app_url="/generator", app_text="Go to app")
 
 @app.route("/community")
 def community():
@@ -55,7 +55,7 @@ def community():
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return render_template("community.html", login_url="/logout", login_text = "Log out", app_url="/index", app_text="Go to app")
+        return render_template("community.html", login_url="/logout", login_text = "Log out", app_url="/generator", app_text="Go to app")
     else:
         return render_template("community.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Get started")
 @app.route("/features")
@@ -64,7 +64,7 @@ def features():
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return render_template("features.html", login_url="/logout", login_text = "Log out", app_url="/index", app_text="Go to app")
+        return render_template("features.html", login_url="/logout", login_text = "Log out", app_url="/generator", app_text="Go to app")
     else:
         return render_template("features.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Get started")
 
@@ -74,7 +74,7 @@ def about():
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return render_template("about.html", login_url="/logout", login_text = "Log out", app_url="/index", app_text="Go to app")
+        return render_template("about.html", login_url="/logout", login_text = "Log out", app_url="/generator", app_text="Go to app")
     else:
         return render_template("about.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Get started")
 
@@ -87,7 +87,7 @@ def callback():
     token_info = sp_oauth.get_access_token(code, as_dict=True, check_cache=False)
     # Saving the access token along with all other token related info
     session["token_info"] = token_info
-    return redirect("index")
+    return redirect("generator")
 
 @app.route("/test_shit", methods=['GET', 'POST'])
 def test_shit():
@@ -103,6 +103,10 @@ def logout():
     session.clear()
     return redirect("/")
 
+@app.route("/success/<prompt>/<playlist_id>")
+def success(prompt, playlist_id):
+    
+    return render_template("success.html", success=True, playlist_id = playlist_id, prompt = prompt, login_url="logout", login_text='Log out')
 
 @app.route("/make_playlist/<prompt>", methods=['GET', 'POST'])
 def make_playlist(prompt):
@@ -289,7 +293,7 @@ def make_playlist(prompt):
     sp.user_playlist_add_tracks(
         user['id'], playlist_id, track_id_list, position=None)
 
-    return redirect(url_for('index', success=True, login_url="logout", login_text='Log out'))
+    return redirect(url_for('success', success=True, prompt = prompt, playlist_id = playlist_id, login_url="logout", login_text='Log out'))
 
 
 def get_token(session):
