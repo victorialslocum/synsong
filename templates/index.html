@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'base.html' %} {% block title %}Synsong{% endblock %} {% block
 navbarend%}
 <div class="navbar-end">
@@ -22,6 +23,62 @@ navbarend%}
       <div class="column p-5">
         <div class="field-label is-medium has-text-left pb-3">
           <label class="label" for="prompt">Prompt</label>
+=======
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='/mystyles.css') }}"
+    />
+  </head>
+  <body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+          <a class="button is-white"> </a>
+        </a>
+      </div>
+
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="/"> Home </a>
+
+          <a class="navbar-item" href="/community"> Community </a>
+
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link"> More </a>
+
+            <div class="navbar-dropdown">
+              <a
+                class="navbar-item"
+                href="https://github.com/victoriaslocum752/synsong"
+              >
+                GitHub
+              </a>
+              <a class="navbar-item" href="https://victoriaslocum.com">
+                About the Creator
+              </a>
+              <a
+                class="navbar-item"
+                href="https://open.spotify.com/user/qz80th8go5difpk5t66gfyqlo?si=00e56d76745946ff"
+              >
+                Synsong on Spotify
+              </a>
+              <hr class="navbar-divider" />
+              <a
+                class="navbar-item"
+                href="https://github.com/victoriaslocum752/synsong/issues/new"
+              >
+                Report an issue
+              </a>
+            </div>
+          </div>
+>>>>>>> d58d05efee41061bf94b94ba9e0ad97ccc4d29fb
         </div>
         <div class="field-body">
           <div class="field">
