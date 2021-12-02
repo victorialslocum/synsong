@@ -1,5 +1,8 @@
-{% extends 'base.html' %} {% block title %}Synsong{% endblock %} {% block
-navbarend%}
+{% extends 'base.html' %} {% block title %}Synsong{% endblock %}{% block
+addscript %}
+<script type="text/javascript" src="static/script.js"></script>
+
+{% endblock %}{% block navbarend%}
 <div class="navbar-end">
   <div class="navbar-item">
     <div class="buttons">
@@ -17,7 +20,7 @@ navbarend%}
 </section>
 {% endblock %} {% block content %}
 <div class="container is-max-desktop has-text-centered">
-  <form action="" method="post" name="prompt" id="prompt">
+  <form action="" method="post" name="prompt" id="inputForm">
     <div class="columns">
       <div class="column p-5">
         <div class="field-label is-medium has-text-left pb-3">
@@ -31,7 +34,6 @@ navbarend%}
               placeholder="A sentence, a quote, a paragraph..."
               name="prompt"
               rows="7"
-              name="prompt"
             ></textarea>
           </div>
         </div>
@@ -40,22 +42,29 @@ navbarend%}
         <div class="field-label is-medium has-text-left pb-3">
           <label class="label" for="prompt">Genre</label>
         </div>
-        <div class="field is-grouped is-grouped-multiline">
-          <p class="control">
-            <a class="button is-primary is-outlined"> Coming </a>
-          </p>
-          <p class="control">
-            <a class="button is-primary is-outlined"> Soon </a>
-          </p>
+        <div class="field is-grouped is-grouped-multiline" id="genreButtons">
+          <input
+            class="button is-primary is-outlined m-3 selectButton"
+            name="blues"
+            value="blues"
+            readonly
+          />
+          <input
+            class="button is-primary is-outlined m-3 selectButton"
+            name="children"
+            value="children"
+            readonly
+          />
         </div>
       </div>
     </div>
     <div class="block pb-2"></div>
+    <input type="hidden" name="hidden" value="none" id="hidden" />
     <input
       class="button is-primary is-medium"
-      type="submit"
-      formmethod="post"
+      type="button"
       value="Make your playlist"
+      id="submitButton"
     />
   </form>
 </div>

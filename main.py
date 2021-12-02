@@ -45,7 +45,9 @@ def home():
 def generator():
     if request.method == 'POST':
         prompt = request.form['prompt']
-        return redirect(url_for('make_playlist', prompt=prompt))
+        genre_list = request.form.get('hidden')
+        print(genre_list)
+        return redirect(url_for('make_playlist', prompt=prompt, genre_list=genre_list))
     else:
         return render_template("generator.html", login_url="/logout", login_text='Log out', app_url="/generator", app_text="Go to app")
 
@@ -108,8 +110,9 @@ def success(prompt, playlist_id):
     
     return render_template("success.html", success=True, playlist_id = playlist_id, prompt = prompt, login_url="/logout", login_text='Log out')
 
-@app.route("/make_playlist/<prompt>", methods=['GET', 'POST'])
-def make_playlist(prompt):
+@app.route("/make_playlist/<prompt>/<genre_list>", methods=['GET', 'POST'])
+def make_playlist(prompt, genre_list):
+    print(genre_list)
     session['token_info'], authorized = get_token(session)
     session.modified = True
 
@@ -203,8 +206,9 @@ def make_playlist(prompt):
         return list
 
     word_list = word_list_combo(words)
+    genre_ids = {'blues':2, 'children':4}
 
-    def parameters(word_list, page_size, s_track_rating):
+    def parameters(word_list, genre_list, page_size, s_track_rating):
         parameters = {
             'apikey': MUSIXMATCH_API_KEY,
             'page_size': page_size
@@ -214,12 +218,19 @@ def make_playlist(prompt):
             parameters['s_track_rating'] = s_track_rating
 
         words = ""
-
+        genres = ""
         for word in word_list:
             words += str(word) + ","
 
-        parameters['q'] = words[:-1]
 
+        for genre in genre_list:
+            genre_id = genre_ids.get(genre)
+            genres += str(genre_id) + ","
+
+        print(genre_list)
+        parameters['q'] = words[:-1]
+        parameters['f_music_genre_id'] = genres[:-1]
+        
         return parameters
 
     def process_name(name):
@@ -251,8 +262,8 @@ def make_playlist(prompt):
     song_dicts = []
 
     for list in word_list:
-        parameter1 = parameters(list, len(list), 'none')
-        parameter2 = parameters(list, len(list), 'desc')
+        parameter1 = parameters(list, genre_list, len(list), 'none')
+        parameter2 = parameters(list, genre_list, len(list), 'desc')
 
         song_dicts.append(get_song_list(parameter1))
         song_dicts.append(get_song_list(parameter2))
