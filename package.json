@@ -11,5 +11,8 @@
     "css-build": "node-sass --omit-source-map-url sass/mystyles.scss static/mystyles.css",
     "css-watch": "npm run css-build -- --watch",
     "start": "npm run css-watch"
+  },
+  "dependencies": {
+    "bulma-extensions": "^6.2.7"
   }
 }

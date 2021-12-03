@@ -33,7 +33,7 @@ addscript %}
               type="text"
               placeholder="A sentence, a quote, a paragraph..."
               name="prompt"
-              rows="7"
+              rows="10"
             ></textarea>
           </div>
         </div>
@@ -42,19 +42,170 @@ addscript %}
         <div class="field-label is-medium has-text-left pb-3">
           <label class="label" for="prompt">Genre</label>
         </div>
-        <div class="field is-grouped is-grouped-multiline" id="genreButtons">
-          <input
-            class="button is-primary is-outlined m-3 selectButton"
-            name="blues"
-            value="blues"
-            readonly
-          />
-          <input
-            class="button is-primary is-outlined m-3 selectButton"
-            name="children"
-            value="children"
-            readonly
-          />
+        <div
+          class="field is-grouped is-grouped-multiline pb-2"
+          id="genreButtons"
+        >
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="all"
+              value="all"
+            >
+              all genres
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="pop"
+              value="pop"
+            >
+              pop
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="rock"
+              value="rock"
+            >
+              rock
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="dance"
+              value="dance"
+            >
+              dance
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="rap"
+              value="rap"
+            >
+              rap
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="world"
+              value="world"
+            >
+              world
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="alternative"
+              value="alternative"
+            >
+              alternative
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="blues"
+              value="blues"
+            >
+              blues
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="electronic"
+              value="electronic"
+            >
+              electronic
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="country"
+              value="country"
+            >
+              country
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="jazz"
+              value="jazz"
+            >
+              jazz
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="folk"
+              value="folk"
+            >
+              folk
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="new age"
+              value="new age"
+            >
+              new age
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="latin"
+              value="latin"
+            >
+              latin
+            </a>
+          </p>
+          {# NOT USED: k-pop, children, comedy, classical, holiday, opera,
+          randb, soundtrack, christian, vocal 23, 'reggae': 24, } #}
+        </div>
+
+        <div class="field-label is-medium has-text-left pb-3">
+          <label class="label" for="visibility">Visibility</label>
+        </div>
+        <div class="field has-addons" id="visibility">
+          <p class="control">
+            <a
+              class="button is-primary is-outlined is-focused selectButton"
+              id="publicButton"
+            >
+              {#
+              <span class="icon is-small">
+                <i class="fas fa-align-left"></i>
+              </span>
+              #}
+              <span>Public</span>
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              id="privateButton"
+            >
+              {#
+              <span class="icon is-small">
+                <i class="fas fa-align-center"></i>
+              </span>
+              #}
+              <span>Private</span>
+            </a>
+          </p>
         </div>
       </div>
     </div>

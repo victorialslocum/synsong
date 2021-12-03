@@ -25,8 +25,15 @@ prompt = "When i've worn a hole In my last pair of shoes I'll have a yellow suns
 
 genre_list = ['blues', "children"]
 
+genre_ids = {'blues': 2, 'comedy': 3, 'children': 4, 'classical': 5, 'country': 6,
+             'electronic': 7, 'holiday': 8, 'opera': 9, 'folk': 10, 'jazz': 11,
+             'latin': 12, 'new age': 13, 'pop': 14,  'randb': 15, 'soundtrack': 16,
+             'dance': 17, 'rap': 18, 'world': 19, 'alternative': 20, 'rock': 21,
+             'christian': 22, 'vocal': 23, 'reggae': 24, 'k-pop': 51}
+
+
 def make_playlist(prompt, genre_list):
-        
+
     nlp = spacy.load('en_core_web_sm')
 
     def create_title(prompt):
@@ -131,7 +138,7 @@ def make_playlist(prompt, genre_list):
 
         parameters['q'] = words[:-1]
         parameters['f_music_genre_id'] = genres[:-1]
-        
+
         return parameters
 
     def process_name(name):
@@ -196,7 +203,6 @@ def make_playlist(prompt, genre_list):
             track_id = response['tracks']['items'][0]['id']
             track_id_list.append(track_id)
 
-
     description = prompt + " ❤ synsong.app"
     playlist = sp.user_playlist_create(
         user['id'], title, public=True, collaborative=False, description=description)
@@ -206,5 +212,6 @@ def make_playlist(prompt, genre_list):
         user['id'], playlist_id, track_id_list, position=None)
 
     return
+
 
 make_playlist(prompt, genre_list)

@@ -31,15 +31,17 @@ oauth = OAuth(app)
 
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
+
 @app.route("/")
 def home():
     sp_oauth = spotipy.oauth2.SpotifyOAuth(
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return render_template("home.html", login_url="/logout", login_text = "Log out", app_url="/generator", app_text="Go to app")
+        return render_template("home.html", login_url="/logout", login_text="Log out", app_url="/generator", app_text="Go to app")
     else:
-        return render_template("home.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Get started")
+        return render_template("home.html", login_url=auth_url, login_text="Log in", app_url=auth_url, app_text="Get started")
+
 
 @app.route("/generator", methods=['GET', 'POST'])
 def generator():
@@ -51,24 +53,28 @@ def generator():
     else:
         return render_template("generator.html", login_url="/logout", login_text='Log out', app_url="/generator", app_text="Go to app")
 
+
 @app.route("/community")
 def community():
     sp_oauth = spotipy.oauth2.SpotifyOAuth(
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return render_template("community.html", login_url="/logout", login_text = "Log out", app_url="/generator", app_text="Go to app")
+        return render_template("community.html", login_url="/logout", login_text="Log out", app_url="/generator", app_text="Go to app")
     else:
-        return render_template("community.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Get started")
+        return render_template("community.html", login_url=auth_url, login_text="Log in", app_url=auth_url, app_text="Get started")
+
+
 @app.route("/features")
 def features():
     sp_oauth = spotipy.oauth2.SpotifyOAuth(
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return render_template("features.html", login_url="/logout", login_text = "Log out", app_url="/generator", app_text="Go to app")
+        return render_template("features.html", login_url="/logout", login_text="Log out", app_url="/generator", app_text="Go to app")
     else:
-        return render_template("features.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Get started")
+        return render_template("features.html", login_url=auth_url, login_text="Log in", app_url=auth_url, app_text="Get started")
+
 
 @app.route("/about")
 def about():
@@ -76,9 +82,10 @@ def about():
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return render_template("about.html", login_url="/logout", login_text = "Log out", app_url="/generator", app_text="Go to app")
+        return render_template("about.html", login_url="/logout", login_text="Log out", app_url="/generator", app_text="Go to app")
     else:
-        return render_template("about.html", login_url= auth_url, login_text = "Log in", app_url=auth_url, app_text="Get started")
+        return render_template("about.html", login_url=auth_url, login_text="Log in", app_url=auth_url, app_text="Get started")
+
 
 @app.route("/callback")
 def callback():
@@ -86,10 +93,12 @@ def callback():
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     session.clear()
     code = request.args.get('code')
-    token_info = sp_oauth.get_access_token(code, as_dict=True, check_cache=False)
+    token_info = sp_oauth.get_access_token(
+        code, as_dict=True, check_cache=False)
     # Saving the access token along with all other token related info
     session["token_info"] = token_info
     return redirect("generator")
+
 
 @app.route("/test_shit", methods=['GET', 'POST'])
 def test_shit():
@@ -100,28 +109,30 @@ def test_shit():
     print(user)
     return user["id"]
 
+
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
     session.clear()
     return redirect("/")
 
+
 @app.route("/success/<prompt>/<playlist_id>")
 def success(prompt, playlist_id):
-    
-    return render_template("success.html", success=True, playlist_id = playlist_id, prompt = prompt, login_url="/logout", login_text='Log out')
+
+    return render_template("success.html", success=True, playlist_id=playlist_id, prompt=prompt, login_url="/logout", login_text='Log out')
+
 
 @app.route("/make_playlist/<prompt>/<genre_list>", methods=['GET', 'POST'])
 def make_playlist(prompt, genre_list):
-    print(genre_list)
     session['token_info'], authorized = get_token(session)
     session.modified = True
 
     if not authorized:
         sp_oauth = spotipy.oauth2.SpotifyOAuth(
-        client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
+            client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
         auth_url = sp_oauth.get_authorize_url()
-        return redirect('/', success = False, login_url=auth_url, login_text = "Log in")
-        
+        return redirect('/', success=False, login_url=auth_url, login_text="Log in")
+
     nlp = spacy.load('en_core_web_sm')
 
     def create_title(prompt):
@@ -206,7 +217,11 @@ def make_playlist(prompt, genre_list):
         return list
 
     word_list = word_list_combo(words)
-    genre_ids = {'blues':2, 'children':4}
+    genre_ids = {'all': 34, 'blues': 2, 'comedy': 3, 'children': 4, 'classical': 5, 'country': 6,
+                 'electronic': 7, 'holiday': 8, 'opera': 9, 'folk': 10, 'jazz': 11,
+                 'latin': 12, 'new age': 13, 'pop': 14,  'randb': 15, 'soundtrack': 16,
+                 'dance': 17, 'rap': 18, 'world': 19, 'alternative': 20, 'rock': 21,
+                 'christian': 22, 'vocal': 23, 'reggae': 24, 'k-pop': 51}
 
     def parameters(word_list, genre_list, page_size, s_track_rating):
         parameters = {
@@ -222,15 +237,15 @@ def make_playlist(prompt, genre_list):
         for word in word_list:
             words += str(word) + ","
 
-
+        genre_list = genre_list.split(",")
         for genre in genre_list:
-            genre_id = genre_ids.get(genre)
+            genre_id = genre_ids[genre]
             genres += str(genre_id) + ","
 
-        print(genre_list)
+        print(genres)
         parameters['q'] = words[:-1]
         parameters['f_music_genre_id'] = genres[:-1]
-        
+
         return parameters
 
     def process_name(name):
@@ -262,8 +277,8 @@ def make_playlist(prompt, genre_list):
     song_dicts = []
 
     for list in word_list:
-        parameter1 = parameters(list, genre_list, len(list), 'none')
-        parameter2 = parameters(list, genre_list, len(list), 'desc')
+        parameter1 = parameters(list, genre_list, len(list)*2, 'none')
+        parameter2 = parameters(list, genre_list, len(list)*2, 'desc')
 
         song_dicts.append(get_song_list(parameter1))
         song_dicts.append(get_song_list(parameter2))
@@ -295,7 +310,6 @@ def make_playlist(prompt, genre_list):
             track_id = response['tracks']['items'][0]['id']
             track_id_list.append(track_id)
 
-
     description = prompt + " ❤ synsong.app"
     playlist = sp.user_playlist_create(
         user['id'], title, public=True, collaborative=False, description=description)
@@ -304,7 +318,7 @@ def make_playlist(prompt, genre_list):
     sp.user_playlist_add_tracks(
         user['id'], playlist_id, track_id_list, position=None)
 
-    return redirect(url_for('success', success=True, prompt = prompt, playlist_id = playlist_id, login_url="/logout", login_text='Log out'))
+    return redirect(url_for('success', success=True, prompt=prompt, playlist_id=playlist_id, login_url="/logout", login_text='Log out'))
 
 
 def get_token(session):

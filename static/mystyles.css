@@ -7295,7 +7295,7 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
   .is-invisible-desktop {
     visibility: hidden !important; } }
 
-input.button.is-primary.is-outlined.selectButton:hover:not(.is-focused),
-input.button.is-primary.is-outlined.selectButton:focus:not(.is-focused) {
+a.button.is-primary.is-outlined.selectButton:hover:not(.is-focused),
+a.button.is-primary.is-outlined.selectButton:focus:not(.is-focused) {
   background-color: #fdfffc;
   color: #e42565; }
