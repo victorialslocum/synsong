@@ -5,19 +5,29 @@ window.onload = function () {
   let privateButton = document.getElementById("privateButton");
   let inputForm = document.getElementById("inputForm");
   let hiddenElement = document.getElementById("hidden");
+  let hiddenElementVis = document.getElementById("hiddenvis");
   let submitButton = document.getElementById("submitButton");
   let genreList = [];
-  console.log(inputForm);
-  console.log(refButtonDiv);
+
   for (var i = 0; i < refButtonDiv.children.length; i++) {
     let button = refButtonDiv.children[i].children[0];
-    console.log(button);
 
     button.onclick = function () {
+      let selectedCount = 0;
+      for (var i = 0; i < refButtonDiv.children.length; i++) {
+        let button = refButtonDiv.children[i].children[0];
+        if (button.classList.contains("is-focused")) {
+          selectedCount++;
+        }
+      }
       if (this.classList.contains("is-focused")) {
         this.classList.remove("is-focused");
       } else {
-        this.classList.add("is-focused");
+        if (selectedCount >= 3) {
+          alert("you can only select 3 genres");
+        } else {
+          this.classList.add("is-focused");
+        }
       }
     };
   }
@@ -47,13 +57,17 @@ window.onload = function () {
     for (var i = 0; i < refButtonDiv.children.length; i++) {
       let button = refButtonDiv.children[i].children[0];
       if (button.classList.contains("is-focused")) {
-        console.log(button.name);
         genreList.push(button.name);
       }
     }
-    console.log(genreList);
+
+    if (privateButton.classList.contains("is-focused")) {
+      hiddenElementVis.setAttribute("value", "False");
+    } else {
+      hiddenElementVis.setAttribute("value", "True");
+    }
     hiddenElement.setAttribute("value", genreList);
-    console.log(hiddenElement);
+
     inputForm.submit();
   };
 };

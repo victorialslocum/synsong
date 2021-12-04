@@ -48,8 +48,9 @@ def generator():
     if request.method == 'POST':
         prompt = request.form['prompt']
         genre_list = request.form.get('hidden')
+        vis = request.form.get("hiddenvis")
         print(genre_list)
-        return redirect(url_for('make_playlist', prompt=prompt, genre_list=genre_list))
+        return redirect(url_for('make_playlist', prompt=prompt, genre_list=genre_list, vis=vis))
     else:
         return render_template("generator.html", login_url="/logout", login_text='Log out', app_url="/generator", app_text="Go to app")
 
@@ -122,8 +123,8 @@ def success(prompt, playlist_id):
     return render_template("success.html", success=True, playlist_id=playlist_id, prompt=prompt, login_url="/logout", login_text='Log out')
 
 
-@app.route("/make_playlist/<prompt>/<genre_list>", methods=['GET', 'POST'])
-def make_playlist(prompt, genre_list):
+@app.route("/make_playlist/<prompt>/<genre_list>/<vis>", methods=['GET', 'POST'])
+def make_playlist(prompt, genre_list, vis):
     session['token_info'], authorized = get_token(session)
     session.modified = True
 
@@ -144,16 +145,16 @@ def make_playlist(prompt, genre_list):
                 if token.dep_ in ['nsubj', 'pobj'] or token.head.lemma_ == 'be':
                     tokens = [t.text for t in token.subtree]
                     title_list.append(tokens)
-
+        print("title list: ")
         print(title_list)
 
         chosen = random.sample(title_list, 1)[0]
-        print(chosen)
         title = ' '.join(chosen)
 
         return title
 
     title = create_title(prompt)
+    print("title: ")
     print(title)
 
     def get_constituents(prompt):
@@ -174,12 +175,25 @@ def make_playlist(prompt, genre_list):
         while("" in const_list):
             const_list.remove("")
 
+        print("constituents: ")
         print(const_list)
         return const_list
+
+    def get_more_constituents(prompt):
+        text = nlp(prompt)
+        filt_chunks = []
+        for token in text:
+            if not token.is_stop:
+                filt_chunks.append([token.lemma_])
+
+        print("more constituents: ")
+        print(filt_chunks)
+        return filt_chunks
 
     words = get_constituents(prompt)
     if len(words) > 5:
         words = random.sample(words, 5)
+    print("words: ")
     print(words)
 
     def word_list_combo(word_list):
@@ -208,11 +222,13 @@ def make_playlist(prompt, genre_list):
             if [i] not in fnl:
                 fnl.append([i])
 
-        if len(word_list) > 5:
-            list = fnl[12:]
+        length = len(word_list)*2
+        if len(word_list) > 3:
+            list = fnl[:1] + fnl[-length:]
         else:
             list = fnl
 
+        print("list: ")
         print(list)
         return list
 
@@ -223,7 +239,7 @@ def make_playlist(prompt, genre_list):
                  'dance': 17, 'rap': 18, 'world': 19, 'alternative': 20, 'rock': 21,
                  'christian': 22, 'vocal': 23, 'reggae': 24, 'k-pop': 51}
 
-    def parameters(word_list, genre_list, page_size, s_track_rating):
+    def parameters(word_list, genre, page_size, s_track_rating):
         parameters = {
             'apikey': MUSIXMATCH_API_KEY,
             'page_size': page_size
@@ -233,18 +249,11 @@ def make_playlist(prompt, genre_list):
             parameters['s_track_rating'] = s_track_rating
 
         words = ""
-        genres = ""
         for word in word_list:
             words += str(word) + ","
 
-        genre_list = genre_list.split(",")
-        for genre in genre_list:
-            genre_id = genre_ids[genre]
-            genres += str(genre_id) + ","
-
-        print(genres)
         parameters['q'] = words[:-1]
-        parameters['f_music_genre_id'] = genres[:-1]
+        parameters['f_music_genre_id'] = genre
 
         return parameters
 
@@ -275,26 +284,47 @@ def make_playlist(prompt, genre_list):
         return song_list
 
     song_dicts = []
+    genre_list = genre_list.split(",")
 
     for list in word_list:
-        parameter1 = parameters(list, genre_list, len(list)*2, 'none')
-        parameter2 = parameters(list, genre_list, len(list)*2, 'desc')
+        for genre in genre_list:
+            parameter1 = parameters(
+                list, genre_ids[genre], len(list)*2, 'none')
+            parameter2 = parameters(
+                list, genre_ids[genre], len(list)*2, 'desc')
 
-        song_dicts.append(get_song_list(parameter1))
-        song_dicts.append(get_song_list(parameter2))
-
-    songs = {}
+            song_dicts.append(get_song_list(parameter1))
+            song_dicts.append(get_song_list(parameter2))
 
     song_list = dict(chain.from_iterable(d.items() for d in song_dicts))
+
+    # if len(song_list) < 10:
+    #     words2 = get_more_constituents(prompt)
+    #     print("words 2: ")
+    #     print(words2)
+    #     for word in words2:
+    #         for genre in genre_list:
+    #             parameter1 = parameters(
+    #                 word, genre_ids[genre], len(list)*2, 'none')
+    #             parameter2 = parameters(
+    #                 word, genre_ids[genre], len(list)*3, 'desc')
+
+    #             song_dicts.append(get_song_list(parameter1))
+    #             song_dicts.append(get_song_list(parameter2))
+    #     song_list = dict(chain.from_iterable(d.items() for d in song_dicts))
+    # elif len(song_list) > 25:
+    #     song_list = song_list[:25]
+
+    songs = {}
 
     for song, artist in song_list.items():
         if song not in songs.keys():
             songs[song] = artist
 
+    print("songs: ")
     print(songs)
 
     sp = spotipy.Spotify(auth=session.get('token_info').get('access_token'))
-    # sp = spotipy.Spotify(auth=token_info['access_token'])
 
     user = sp.me()
     print(user)
@@ -318,7 +348,7 @@ def make_playlist(prompt, genre_list):
     sp.user_playlist_add_tracks(
         user['id'], playlist_id, track_id_list, position=None)
 
-    return redirect(url_for('success', success=True, prompt=prompt, playlist_id=playlist_id, login_url="/logout", login_text='Log out'))
+    return redirect(url_for('success', success=vis, prompt=prompt, playlist_id=playlist_id, login_url="/logout", login_text='Log out'))
 
 
 def get_token(session):

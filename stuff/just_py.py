@@ -21,15 +21,9 @@ API_BASE = 'https://accounts.spotify.com'
 SCOPE = 'playlist-modify-public user-read-private'
 
 
-prompt = "When i've worn a hole In my last pair of shoes I'll have a yellow sunshine kind of day"
+prompt = "weirdo funky person pop"
 
-genre_list = ['blues', "children"]
-
-genre_ids = {'blues': 2, 'comedy': 3, 'children': 4, 'classical': 5, 'country': 6,
-             'electronic': 7, 'holiday': 8, 'opera': 9, 'folk': 10, 'jazz': 11,
-             'latin': 12, 'new age': 13, 'pop': 14,  'randb': 15, 'soundtrack': 16,
-             'dance': 17, 'rap': 18, 'world': 19, 'alternative': 20, 'rock': 21,
-             'christian': 22, 'vocal': 23, 'reggae': 24, 'k-pop': 51}
+genre_list = "blues,pop"
 
 
 def make_playlist(prompt, genre_list):
@@ -45,16 +39,16 @@ def make_playlist(prompt, genre_list):
                 if token.dep_ in ['nsubj', 'pobj'] or token.head.lemma_ == 'be':
                     tokens = [t.text for t in token.subtree]
                     title_list.append(tokens)
-
+        print("title list: ")
         print(title_list)
 
         chosen = random.sample(title_list, 1)[0]
-        print(chosen)
         title = ' '.join(chosen)
 
         return title
 
     title = create_title(prompt)
+    print("title: ")
     print(title)
 
     def get_constituents(prompt):
@@ -75,12 +69,25 @@ def make_playlist(prompt, genre_list):
         while("" in const_list):
             const_list.remove("")
 
+        print("constituents: ")
         print(const_list)
         return const_list
+
+    def get_more_constituents(prompt):
+        text = nlp(prompt)
+        filt_chunks = []
+        for token in text:
+            if not token.is_stop:
+                filt_chunks.append([token.lemma_])
+
+        print("more constituents: ")
+        print(filt_chunks)
+        return filt_chunks
 
     words = get_constituents(prompt)
     if len(words) > 5:
         words = random.sample(words, 5)
+    print("words: ")
     print(words)
 
     def word_list_combo(word_list):
@@ -109,17 +116,24 @@ def make_playlist(prompt, genre_list):
             if [i] not in fnl:
                 fnl.append([i])
 
-        if len(word_list) > 5:
-            list = fnl[12:]
+        length = len(word_list)*2
+        if len(word_list) > 3:
+            list = fnl[:1] + fnl[-length:]
         else:
             list = fnl
 
+        print("list: ")
         print(list)
         return list
 
     word_list = word_list_combo(words)
+    genre_ids = {'all': 34, 'blues': 2, 'comedy': 3, 'children': 4, 'classical': 5, 'country': 6,
+                 'electronic': 7, 'holiday': 8, 'opera': 9, 'folk': 10, 'jazz': 11,
+                 'latin': 12, 'new age': 13, 'pop': 14,  'randb': 15, 'soundtrack': 16,
+                 'dance': 17, 'rap': 18, 'world': 19, 'alternative': 20, 'rock': 21,
+                 'christian': 22, 'vocal': 23, 'reggae': 24, 'k-pop': 51}
 
-    def parameters(word_list, genre_list, page_size, s_track_rating):
+    def parameters(word_list, genre, page_size, s_track_rating):
         parameters = {
             'apikey': MUSIXMATCH_API_KEY,
             'page_size': page_size
@@ -129,15 +143,11 @@ def make_playlist(prompt, genre_list):
             parameters['s_track_rating'] = s_track_rating
 
         words = ""
-        genres = ""
         for word in word_list:
             words += str(word) + ","
 
-        for genre in genre_list:
-            genres += str(genre)
-
         parameters['q'] = words[:-1]
-        parameters['f_music_genre_id'] = genres[:-1]
+        parameters['f_music_genre_id'] = genre
 
         return parameters
 
@@ -168,29 +178,49 @@ def make_playlist(prompt, genre_list):
         return song_list
 
     song_dicts = []
+    genre_list = genre_list.split(",")
 
     for list in word_list:
-        parameter1 = parameters(list, genre_list, len(list), 'none')
-        parameter2 = parameters(list, genre_list, len(list), 'desc')
+        for genre in genre_list:
+            parameter1 = parameters(
+                list, genre_ids[genre], len(list)*2, 'none')
+            parameter2 = parameters(
+                list, genre_ids[genre], len(list)*3, 'desc')
 
-        song_dicts.append(get_song_list(parameter1))
-        song_dicts.append(get_song_list(parameter2))
-
-    songs = {}
+            song_dicts.append(get_song_list(parameter1))
+            song_dicts.append(get_song_list(parameter2))
 
     song_list = dict(chain.from_iterable(d.items() for d in song_dicts))
+
+    if len(song_list) < 10:
+        words2 = get_more_constituents(prompt)
+        print("words 2: ")
+        print(words2)
+        for word in words2:
+            for genre in genre_list:
+                parameter1 = parameters(
+                    word, genre_ids[genre], len(list)*2, 'none')
+                parameter2 = parameters(
+                    word, genre_ids[genre], len(list)*3, 'desc')
+
+                song_dicts.append(get_song_list(parameter1))
+                song_dicts.append(get_song_list(parameter2))
+
+    song_list = dict(chain.from_iterable(d.items() for d in song_dicts))
+
+    songs = {}
 
     for song, artist in song_list.items():
         if song not in songs.keys():
             songs[song] = artist
 
+    print("songs: ")
     print(songs)
 
-    sp = spotipy.Spotify(auth=session.get('token_info').get('access_token'))
-    # sp = spotipy.Spotify(auth=token_info['access_token'])
+    scope = "playlist-modify-public"
 
-    user = sp.me()
-    print(user)
+    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=SPOTIPY_CLIENT_ID,
+                                                   client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri='http://localhost:8000/'))
 
     track_id_list = []
 
@@ -205,11 +235,11 @@ def make_playlist(prompt, genre_list):
 
     description = prompt + " ❤ synsong.app"
     playlist = sp.user_playlist_create(
-        user['id'], title, public=True, collaborative=False, description=description)
+        'victoriaslo235', title, public=True, collaborative=False, description=description)
 
     playlist_id = playlist['id']
     sp.user_playlist_add_tracks(
-        user['id'], playlist_id, track_id_list, position=None)
+        'a0f90529781c4f6a', playlist_id, track_id_list, position=None)
 
     return
 
