@@ -7299,3 +7299,10 @@ a.button.is-primary.is-outlined.selectButton:hover:not(.is-focused),
 a.button.is-primary.is-outlined.selectButton:focus:not(.is-focused) {
   background-color: #fdfffc;
   color: #e42565; }
+
+.iframe-div {
+  border-radius: 10px;
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  height: auto; }

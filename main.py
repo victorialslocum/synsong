@@ -117,10 +117,10 @@ def logout():
     return redirect("/")
 
 
-@app.route("/success/<prompt>/<playlist_id>")
-def success(prompt, playlist_id):
+@app.route("/success/<prompt>/<playlist_id>/<genres>")
+def success(prompt, playlist_id, genres):
 
-    return render_template("success.html", success=True, playlist_id=playlist_id, prompt=prompt, login_url="/logout", login_text='Log out')
+    return render_template("success.html", success=True, playlist_id=playlist_id, genres=genres, prompt=prompt, login_url="/logout", login_text='Log out')
 
 
 @app.route("/make_playlist/<prompt>/<genre_list>/<vis>", methods=['GET', 'POST'])
@@ -348,7 +348,7 @@ def make_playlist(prompt, genre_list, vis):
     sp.user_playlist_add_tracks(
         user['id'], playlist_id, track_id_list, position=None)
 
-    return redirect(url_for('success', success=vis, prompt=prompt, playlist_id=playlist_id, login_url="/logout", login_text='Log out'))
+    return redirect(url_for('success', success=vis, prompt=prompt, genres=genre_list, playlist_id=playlist_id, login_url="/logout", login_text='Log out'))
 
 
 def get_token(session):

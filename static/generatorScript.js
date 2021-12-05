@@ -7,6 +7,7 @@ window.onload = function () {
   let hiddenElement = document.getElementById("hidden");
   let hiddenElementVis = document.getElementById("hiddenvis");
   let submitButton = document.getElementById("submitButton");
+  let prompt = document.getElementById("prompt");
   let genreList = [];
 
   for (var i = 0; i < refButtonDiv.children.length; i++) {
@@ -68,6 +69,19 @@ window.onload = function () {
     }
     hiddenElement.setAttribute("value", genreList);
 
-    inputForm.submit();
+    let selectedCount = 0;
+    for (var i = 0; i < refButtonDiv.children.length; i++) {
+      let button = refButtonDiv.children[i].children[0];
+      if (button.classList.contains("is-focused")) {
+        selectedCount++;
+      }
+    }
+    if (selectedCount == 0) {
+      alert("Select at least 1 genre!");
+    } else if (prompt.value == "") {
+      alert("Input a prompt!");
+    } else {
+      inputForm.submit();
+    }
   };
 };

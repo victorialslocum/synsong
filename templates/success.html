@@ -1,5 +1,8 @@
-{% extends 'base.html' %} {% block title %}Community{% endblock %} {% block
-navbarend%}
+{% extends 'base.html' %} {% block title %}Your Playlist{% endblock %} {% block
+addscript %}
+<script type="text/javascript" src="/static/successScript.js"></script>
+
+{% endblock %}{% block navbarend%}
 <div class="navbar-end">
   <div class="navbar-item">
     <div class="buttons">
@@ -18,14 +21,15 @@ navbarend%}
 {% endblock %}{% block content %}
 <div class="container is-max-widescreen">
   <div class="columns m-3">
-    <div class="column m-6">
+    <div class="column m-1">
       <div class="content">
+        <input type="hidden" name="hidden" value="{{ genres }}" id="hidden" />
         <p class="is-size-5 has-text-weight-bold">Prompt:</p>
         <div class="content">
           <textarea
             class="textarea is-primary has-fixed-size"
             type="text"
-            rows="7"
+            rows="10"
             placeholder="Text input"
             readonly
           >
@@ -33,30 +37,147 @@ navbarend%}
           >
         </div>
         <p class="is-size-5 has-text-weight-bold">Genre:</p>
-        <div class="field is-grouped is-grouped-multiline">
+        <div
+          class="field is-grouped is-grouped-multiline pb-2"
+          id="genreButtons"
+        >
           <p class="control">
-            <a class="button is-primary"> Coming </a>
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="all"
+              value="all"
+            >
+              all genres
+            </a>
           </p>
           <p class="control">
-            <a class="button is-primary is-outlined"> Soon </a>
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="pop"
+              value="pop"
+            >
+              pop
+            </a>
           </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="rock"
+              value="rock"
+            >
+              rock
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="dance"
+              value="dance"
+            >
+              dance
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="rap"
+              value="rap"
+            >
+              rap
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="world"
+              value="world"
+            >
+              world
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="alternative"
+              value="alternative"
+            >
+              alternative
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="blues"
+              value="blues"
+            >
+              blues
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="electronic"
+              value="electronic"
+            >
+              electronic
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="country"
+              value="country"
+            >
+              country
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="jazz"
+              value="jazz"
+            >
+              jazz
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="folk"
+              value="folk"
+            >
+              folk
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="new age"
+              value="new age"
+            >
+              new age
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-primary is-outlined selectButton"
+              name="latin"
+              value="latin"
+            >
+              latin
+            </a>
+          </p>
+          {# NOT USED: k-pop, children, comedy, classical, holiday, opera,
+          randb, soundtrack, christian, vocal 23, 'reggae': 24, } #}
         </div>
       </div>
     </div>
     <div class="column m-6">
-      <div
-        style="
-          border-radius: 10px;
-          overflow: hidden;
-          width: 100%;
-          display: flex;
-          height: 100%;
-        "
-      >
+      <div class="iframe-div">
         <iframe
           src="https://open.spotify.com/embed/playlist/{{ playlist_id }}?utm_source=generator&theme=0"
           width="100%"
-          height="380"
+          height="550"
           frameborder="0"
           allowfullscreen=""
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"

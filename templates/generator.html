@@ -1,6 +1,6 @@
-{% extends 'base.html' %} {% block title %}Synsong{% endblock %}{% block
+{% extends 'base.html' %} {% block title %}Generator{% endblock %}{% block
 addscript %}
-<script type="text/javascript" src="static/script.js"></script>
+<script type="text/javascript" src="static/generatorScript.js"></script>
 
 {% endblock %}{% block navbarend%}
 <div class="navbar-end">
@@ -33,6 +33,7 @@ addscript %}
               type="text"
               placeholder="A sentence, a quote, a paragraph..."
               name="prompt"
+              id="prompt"
               rows="10"
             ></textarea>
           </div>

@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block
+{% extends 'base.html' %} {% block title %}Synsong{% endblock %} {% block
 navbarend%} {{ super() }} {% endblock %} {% block hero %} {{ super() }}{%
 endblock %} {% block active_home %}class="is-active"{% endblock %}{% block
 content %}
@@ -26,28 +26,62 @@ Sing like no one’s listening, love like you’ve never been hurt, dance like n
           >
         </div>
         <p class="is-size-5 has-text-weight-bold">Genre:</p>
-        <div class="field is-grouped is-grouped-multiline">
+        <div class="field is-grouped is-grouped-multiline pb-2">
+          {#
           <p class="control">
-            <a class="button is-primary"> Coming </a>
+            <a class="button is-primary is-outlined"> all genres </a>
+          </p>
+          #}
+          <p class="control">
+            <a class="button is-primary"> pop </a>
           </p>
           <p class="control">
-            <a class="button is-primary is-outlined"> Soon </a>
+            <a class="button is-primary"> rock </a>
           </p>
+          {#
+          <p class="control">
+            <a class="button is-primary is-outlined"> dance </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary is-outlined"> rap </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary is-outlined"> world </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary is-outlined"> alternative </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary is-outlined"> blues </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary is-outlined"> electronic </a>
+          </p>
+          #}
+          <p class="control">
+            <a class="button is-primary"> country </a>
+          </p>
+          {#
+          <p class="control">
+            <a class="button is-primary is-outlined"> jazz </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary is-outlined"> folk </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary is-outlined"> new age </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary is-outlined"> latin </a>
+          </p>
+          #}
         </div>
       </div>
     </div>
     <div class="column m-6">
-      <div
-        style="
-          border-radius: 10px;
-          overflow: hidden;
-          width: 100%;
-          display: flex;
-          height: 100%;
-        "
-      >
+      <div class="iframe-div">
         <iframe
-          src="https://open.spotify.com/embed/playlist/18u2s6QEvCe6RYF0H4JTEQ?utm_source=generator&theme=0"
+          src="https://open.spotify.com/embed/playlist/1DQS52pGKZQswv1baQTzMP?utm_source=generator&theme=0"
           width="100%"
           height="380"
           frameborder="0"
@@ -59,17 +93,9 @@ Sing like no one’s listening, love like you’ve never been hurt, dance like n
   </div>
   <div class="columns m-3">
     <div class="column m-6">
-      <div
-        style="
-          border-radius: 10px;
-          overflow: hidden;
-          width: 100%;
-          display: flex;
-          height: 100%;
-        "
-      >
+      <div class="iframe-div">
         <iframe
-          src="https://open.spotify.com/embed/playlist/3k3kfJW1xld4oDzIMO8oVw?utm_source=generator&theme=0"
+          src="https://open.spotify.com/embed/playlist/0hKewmIpMy5CGa8lWKV3iv?utm_source=generator&theme=0"
           width="100%"
           height="380"
           frameborder="0"
@@ -93,13 +119,57 @@ Potatoes are great food for worms and bugs in the ground.</textarea
           >
         </div>
         <p class="is-size-5 has-text-weight-bold">Genre:</p>
-        <div class="field is-grouped is-grouped-multiline">
+        <div class="field is-grouped is-grouped-multiline pb-2">
+          {#
           <p class="control">
-            <a class="button is-primary"> Coming </a>
+            <a class="button is-primary is-outlined"> all genres </a>
+          </p>
+          #} {#
+          <p class="control">
+            <a class="button is-primary is-outlined is-focused"> pop </a>
           </p>
           <p class="control">
-            <a class="button is-primary is-outlined"> Soon </a>
+            <a class="button is-primary is-outlined is-focused"> rock </a>
           </p>
+          #} {#
+          <p class="control">
+            <a class="button is-primary is-outlined"> dance </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary is-outlined"> rap </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary is-outlined"> world </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary is-outlined"> alternative </a>
+          </p>
+          #}
+          <p class="control">
+            <a class="button is-primary"> blues </a>
+          </p>
+          {#
+          <p class="control">
+            <a class="button is-primary is-outlined"> electronic </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary is-outlined is-focused"> country </a>
+          </p>
+          #}
+          <p class="control">
+            <a class="button is-primary"> jazz </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary"> folk </a>
+          </p>
+          {#
+          <p class="control">
+            <a class="button is-primary is-outlined"> new age </a>
+          </p>
+          <p class="control">
+            <a class="button is-primary is-outlined"> latin </a>
+          </p>
+          #}
         </div>
       </div>
     </div>
