@@ -18,6 +18,20 @@
       src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
     ></script>
     {% block addscript %} {% endblock %}
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-F9XQHS19P8"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-F9XQHS19P8");
+    </script>
   </head>
   <body>
     <nav class="navbar" role="navigation" aria-label="main navigation">
