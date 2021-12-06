@@ -20,6 +20,7 @@ MUSIXMATCH_API_KEY = config('MUSIXMATCH_API_KEY')
 SPOTIPY_CLIENT_ID = config('SPOTIPY_CLIENT_ID')
 SPOTIPY_CLIENT_SECRET = config('SPOTIPY_CLIENT_SECRET')
 SECRET_KEY = config('SECRET_KEY')
+GANALYTICS = config('GANALYTICS')
 
 REDIRECT_URI = config('REDIRECT_URI')
 API_BASE = 'https://accounts.spotify.com'
@@ -38,9 +39,9 @@ def home():
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return render_template("home.html", login_url="/logout", login_text="Log out", app_url="/generator", app_text="Go to app")
+        return render_template("home.html", login_url="/logout", login_text="Log out", app_url="/generator", app_text="Go to app", ganalytics=GANALYTICS)
     else:
-        return render_template("home.html", login_url=auth_url, login_text="Log in", app_url=auth_url, app_text="Get started")
+        return render_template("home.html", login_url=auth_url, login_text="Log in", app_url=auth_url, app_text="Get started", ganalytics=GANALYTICS)
 
 
 @app.route("/generator", methods=['GET', 'POST'])
@@ -52,7 +53,7 @@ def generator():
         print(genre_list)
         return redirect(url_for('make_playlist', prompt=prompt, genre_list=genre_list, vis=vis))
     else:
-        return render_template("generator.html", login_url="/logout", login_text='Log out', app_url="/generator", app_text="Go to app")
+        return render_template("generator.html", login_url="/logout", login_text='Log out', app_url="/generator", app_text="Go to app", ganalytics=GANALYTICS)
 
 
 @app.route("/community")
@@ -61,9 +62,9 @@ def community():
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return render_template("community.html", login_url="/logout", login_text="Log out", app_url="/generator", app_text="Go to app")
+        return render_template("community.html", login_url="/logout", login_text="Log out", app_url="/generator", app_text="Go to app", ganalytics=GANALYTICS)
     else:
-        return render_template("community.html", login_url=auth_url, login_text="Log in", app_url=auth_url, app_text="Get started")
+        return render_template("community.html", login_url=auth_url, login_text="Log in", app_url=auth_url, app_text="Get started", ganalytics=GANALYTICS)
 
 
 @app.route("/features")
@@ -72,9 +73,9 @@ def features():
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return render_template("features.html", login_url="/logout", login_text="Log out", app_url="/generator", app_text="Go to app")
+        return render_template("features.html", login_url="/logout", login_text="Log out", app_url="/generator", app_text="Go to app", ganalytics=GANALYTICS)
     else:
-        return render_template("features.html", login_url=auth_url, login_text="Log in", app_url=auth_url, app_text="Get started")
+        return render_template("features.html", login_url=auth_url, login_text="Log in", app_url=auth_url, app_text="Get started", ganalytics=GANALYTICS)
 
 
 @app.route("/about")
@@ -83,9 +84,9 @@ def about():
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     if "token_info" in session:
-        return render_template("about.html", login_url="/logout", login_text="Log out", app_url="/generator", app_text="Go to app")
+        return render_template("about.html", login_url="/logout", login_text="Log out", app_url="/generator", app_text="Go to app", ganalytics=GANALYTICS)
     else:
-        return render_template("about.html", login_url=auth_url, login_text="Log in", app_url=auth_url, app_text="Get started")
+        return render_template("about.html", login_url=auth_url, login_text="Log in", app_url=auth_url, app_text="Get started", ganalytics=GANALYTICS)
 
 
 @app.route("/callback")
@@ -120,7 +121,7 @@ def logout():
 @app.route("/success/<prompt>/<playlist_id>/<genres>")
 def success(prompt, playlist_id, genres):
 
-    return render_template("success.html", success=True, playlist_id=playlist_id, genres=genres, prompt=prompt, login_url="/logout", login_text='Log out')
+    return render_template("success.html", success=True, playlist_id=playlist_id, genres=genres, prompt=prompt, login_url="/logout", login_text='Log out', ganalytics=GANALYTICS)
 
 
 @app.route("/make_playlist/<prompt>/<genre_list>/<vis>", methods=['GET', 'POST'])
