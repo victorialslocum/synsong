@@ -21,7 +21,7 @@ API_BASE = 'https://accounts.spotify.com'
 SCOPE = 'playlist-modify-public user-read-private'
 
 
-prompt = "weirdo funky person pop"
+prompt = "sunshine is my favorite color, yellow is the color of bees and happiness"
 
 genre_list = "blues,pop"
 
@@ -42,8 +42,11 @@ def make_playlist(prompt, genre_list):
         print("title list: ")
         print(title_list)
 
-        chosen = random.sample(title_list, 1)[0]
-        title = ' '.join(chosen)
+        if title_list != []:
+            chosen = random.sample(title_list, 1)[0]
+            title = ' '.join(chosen)
+        else:
+            title = prompt
 
         return title
 
@@ -192,22 +195,6 @@ def make_playlist(prompt, genre_list):
 
     song_list = dict(chain.from_iterable(d.items() for d in song_dicts))
 
-    if len(song_list) < 10:
-        words2 = get_more_constituents(prompt)
-        print("words 2: ")
-        print(words2)
-        for word in words2:
-            for genre in genre_list:
-                parameter1 = parameters(
-                    word, genre_ids[genre], len(list)*2, 'none')
-                parameter2 = parameters(
-                    word, genre_ids[genre], len(list)*3, 'desc')
-
-                song_dicts.append(get_song_list(parameter1))
-                song_dicts.append(get_song_list(parameter2))
-
-    song_list = dict(chain.from_iterable(d.items() for d in song_dicts))
-
     songs = {}
 
     for song, artist in song_list.items():
@@ -216,6 +203,30 @@ def make_playlist(prompt, genre_list):
 
     print("songs: ")
     print(songs)
+
+    if len(songs) < 10:
+        more_words = get_more_constituents(prompt)
+        print("more words: ")
+        print(more_words)
+        for word in more_words:
+            for genre in genre_list:
+                parameter1 = parameters(
+                    word, genre_ids[genre], len(list)*2, 'none')
+                parameter2 = parameters(
+                    word, genre_ids[genre], len(list)*3, 'desc')
+
+                song_dicts.append(get_song_list(parameter1))
+                song_dicts.append(get_song_list(parameter2))
+        song_list = dict(chain.from_iterable(d.items() for d in song_dicts))
+        for song, artist in song_list.items():
+            if song not in songs.keys():
+                songs[song] = artist
+
+        print("new songs: ")
+        print(songs)
+
+    if len(songs) > 25:
+        songs = {S: A for (S, A) in [x for x in songs.items()][:30]}
 
     scope = "playlist-modify-public"
 
