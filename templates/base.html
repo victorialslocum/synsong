@@ -17,6 +17,7 @@
       nomodule
       src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
     ></script>
+    <script type="text/javascript" src="static/script.js"></script>
     {% block addscript %} {% endblock %}
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script
@@ -36,21 +37,31 @@
   <body>
     <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
-        <a class="navbar-item" href="/">
-          <a class="button is-white"> </a>
+        <a class="navbar-item" href="/"> <a class="button is-white"> </a> </a
+        ><a
+          role="button"
+          class="navbar-burger"
+          data-target="navMenu"
+          aria-label="menu"
+          aria-expanded="false"
+          id="navburger"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
         </a>
       </div>
 
-      <div class="navbar-menu is-active">
+      <div class="navbar-menu" id="navMenu">
         <div class="navbar-start">
           <a class="navbar-item" href="/"> Home </a>
 
           <a class="navbar-item" href="/community"> Community </a>
 
-          <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-item has-dropdown is-hoverable" id="dropdownitem">
             <a class="navbar-link"> More </a>
 
-            <div class="navbar-dropdown">
+            <div class="navbar-dropdown" id="dropdown">
               <a
                 class="navbar-item"
                 href="https://github.com/victoriaslocum752/synsong"

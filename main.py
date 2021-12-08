@@ -133,7 +133,7 @@ def make_playlist(prompt, genre_list, vis):
         sp_oauth = spotipy.oauth2.SpotifyOAuth(
             client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=REDIRECT_URI, scope=SCOPE)
         auth_url = sp_oauth.get_authorize_url()
-        return redirect('/', success=False, login_url=auth_url, login_text="Log in")
+        return redirect('/')
 
     nlp = spacy.load('en_core_web_sm')
 
@@ -290,8 +290,11 @@ def make_playlist(prompt, genre_list, vis):
     song_dicts = []
     genre_list = genre_list.split(",")
 
+    genres = []
+    [genres.append(x) for x in genre_list if x not in genres]
+
     for list in word_list:
-        for genre in genre_list:
+        for genre in genres:
             parameter1 = parameters(
                 list, genre_ids[genre], len(list)*2, 'none')
             parameter2 = parameters(
@@ -316,7 +319,7 @@ def make_playlist(prompt, genre_list, vis):
         print("more words: ")
         print(more_words)
         for word in more_words:
-            for genre in genre_list:
+            for genre in genres:
                 parameter1 = parameters(
                     word, genre_ids[genre], len(list)*2, 'none')
                 parameter2 = parameters(
