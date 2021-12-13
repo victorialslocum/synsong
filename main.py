@@ -1,7 +1,5 @@
 # to run this (lol)
-# export FLASK_APP=main.py
-# export FLASK_ENV=development
-# flask run
+# FLASK_APP=main.py FLASK_ENV=development flask run
 
 import requests
 import spotipy
@@ -50,8 +48,9 @@ def generator():
         prompt = request.form['prompt']
         genre_list = request.form.get('hidden')
         vis = request.form.get("hiddenvis")
+        pop = request.form.get("hiddenpop")
         print(genre_list)
-        return redirect(url_for('make_playlist', prompt=prompt, genre_list=genre_list, vis=vis))
+        return redirect(url_for('make_playlist', prompt=prompt, genre_list=genre_list, vis=vis, pop=pop))
     else:
         return render_template("generator.html", login_url="/logout", login_text='Log out', app_url="/generator", app_text="Go to app", ganalytics=GANALYTICS)
 
@@ -118,14 +117,14 @@ def logout():
     return redirect("/")
 
 
-@app.route("/success/<prompt>/<playlist_id>/<genres>")
-def success(prompt, playlist_id, genres):
+@app.route("/success/<prompt>/<playlist_id>/<genres>/<pop>")
+def success(prompt, playlist_id, genres, pop):
 
-    return render_template("success.html", success=True, playlist_id=playlist_id, genres=genres, prompt=prompt, login_url="/logout", login_text='Log out', ganalytics=GANALYTICS)
+    return render_template("success.html", success=True, playlist_id=playlist_id, genres=genres, prompt=prompt, pop=pop, login_url="/logout", login_text='Log out', ganalytics=GANALYTICS)
 
 
-@app.route("/make_playlist/<prompt>/<genre_list>/<vis>", methods=['GET', 'POST'])
-def make_playlist(prompt, genre_list, vis):
+@app.route("/make_playlist/<prompt>/<genre_list>/<vis>/<pop>", methods=['GET', 'POST'])
+def make_playlist(prompt, genre_list, vis, pop):
     session['token_info'], authorized = get_token(session)
     session.modified = True
 
@@ -293,12 +292,29 @@ def make_playlist(prompt, genre_list, vis):
     genres = []
     [genres.append(x) for x in genre_list if x not in genres]
 
+    pop = int(pop)
+    print(pop)
+
     for list in word_list:
+        if pop == 0:
+            lenlist = [len(list)*4, 0]
+        if pop == 100:
+            lenlist = [0, len(list)*4]
+        elif pop < 40:
+            lenlist = [len(list)*3, len(list)]
+        elif 40 <= pop <= 70:
+            lenlist = [len(list)*2, len(list)*2]
+        elif pop > 70:
+            lenlist = [len(list), len(list)*3]
+
+        print("none: ", lenlist[0])
+        print("pop: ", lenlist[1])
+
         for genre in genres:
             parameter1 = parameters(
-                list, genre_ids[genre], len(list)*2, 'none')
+                list, genre_ids[genre], lenlist[0], 'none')
             parameter2 = parameters(
-                list, genre_ids[genre], len(list)*2, 'desc')
+                list, genre_ids[genre], lenlist[1], 'desc')
 
             song_dicts.append(get_song_list(parameter1))
             song_dicts.append(get_song_list(parameter2))
@@ -362,7 +378,7 @@ def make_playlist(prompt, genre_list, vis):
     sp.user_playlist_add_tracks(
         user['id'], playlist_id, track_id_list, position=None)
 
-    return redirect(url_for('success', success=vis, prompt=prompt, genres=genre_list, playlist_id=playlist_id, login_url="/logout", login_text='Log out'))
+    return redirect(url_for('success', success=vis, prompt=prompt, genres=genre_list, pop=pop, playlist_id=playlist_id, login_url="/logout", login_text='Log out'))
 
 
 def get_token(session):

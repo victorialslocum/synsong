@@ -36,7 +36,7 @@ addscript %}
 {{ prompt }}</textarea
           >
         </div>
-        <p class="is-size-5 has-text-weight-bold">Genre:</p>
+        <p class="is-size-5 has-text-weight-bold">Genres</p>
         <div
           class="field is-grouped is-grouped-multiline pb-2"
           id="genreButtons"
@@ -170,6 +170,20 @@ addscript %}
           {# NOT USED: k-pop, children, comedy, classical, holiday, opera,
           randb, soundtrack, christian, vocal 23, 'reggae': 24, } #}
         </div>
+        <p class="is-size-5 has-text-weight-bold">Popularity</p>
+        <div class="field has-addons" id="popularity">
+          <div class="slidecontainer">
+            <input
+              type="range"
+              min="1"
+              max="100"
+              value="{{ pop }}"
+              class="slider"
+              id="myRange"
+              disabled
+            />
+          </div>
+        </div>
       </div>
     </div>
     <div class="column m-6">
@@ -177,7 +191,7 @@ addscript %}
         <iframe
           src="https://open.spotify.com/embed/playlist/{{ playlist_id }}?utm_source=generator&theme=0"
           width="100%"
-          height="550"
+          height="650"
           frameborder="0"
           allowfullscreen=""
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"

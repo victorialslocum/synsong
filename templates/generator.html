@@ -41,7 +41,7 @@ addscript %}
       </div>
       <div class="column p-5">
         <div class="field-label is-medium has-text-left pb-3">
-          <label class="label" for="prompt">Genre</label>
+          <label class="label" for="prompt">Genres</label>
         </div>
         <div
           class="field is-grouped is-grouped-multiline pb-2"
@@ -177,42 +177,64 @@ addscript %}
           randb, soundtrack, christian, vocal 23, 'reggae': 24, } #}
         </div>
 
-        <div class="field-label is-medium has-text-left pb-3">
-          <label class="label" for="visibility">Visibility</label>
-        </div>
-        <div class="field has-addons" id="visibility">
-          <p class="control">
-            <a
-              class="button is-primary is-outlined is-focused selectButton"
-              id="publicButton"
-            >
-              {#
-              <span class="icon is-small">
-                <i class="fas fa-align-left"></i>
-              </span>
-              #}
-              <span>Public</span>
-            </a>
-          </p>
-          <p class="control">
-            <a
-              class="button is-primary is-outlined selectButton"
-              id="privateButton"
-            >
-              {#
-              <span class="icon is-small">
-                <i class="fas fa-align-center"></i>
-              </span>
-              #}
-              <span>Private</span>
-            </a>
-          </p>
+        <div class="columns">
+          <div class="column">
+            <div class="field-label is-medium has-text-left pb-3">
+              <label class="label" for="visibility">Visibility</label>
+            </div>
+            <div class="field has-addons" id="visibility">
+              <p class="control">
+                <a
+                  class="button is-primary is-outlined is-focused selectButton"
+                  id="publicButton"
+                >
+                  {#
+                  <span class="icon is-small">
+                    <i class="fas fa-align-left"></i>
+                  </span>
+                  #}
+                  <span>Public</span>
+                </a>
+              </p>
+              <p class="control">
+                <a
+                  class="button is-primary is-outlined selectButton"
+                  id="privateButton"
+                >
+                  {#
+                  <span class="icon is-small">
+                    <i class="fas fa-align-center"></i>
+                  </span>
+                  #}
+                  <span>Private</span>
+                </a>
+              </p>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field-label is-medium has-text-left pb-4">
+              <label class="label" for="visibility">Popularity</label>
+            </div>
+            <div class="field has-addons" id="popularity">
+              <div class="slidecontainer">
+                <input
+                  type="range"
+                  min="1"
+                  max="100"
+                  value="50"
+                  class="slider"
+                  id="myRange"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <div class="block pb-2"></div>
     <input type="hidden" name="hidden" value="none" id="hidden" />
     <input type="hidden" name="hiddenvis" value="none" id="hiddenvis" />
+    <input type="hidden" name="hiddenpop" value="none" id="hiddenpop" />
     <input
       class="button is-primary is-medium"
       type="button"

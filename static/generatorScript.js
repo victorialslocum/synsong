@@ -6,9 +6,18 @@ window.onload = function () {
   let inputForm = document.getElementById("inputForm");
   let hiddenElement = document.getElementById("hidden");
   let hiddenElementVis = document.getElementById("hiddenvis");
+  let hiddenElementPop = document.getElementById("hiddenpop");
   let submitButton = document.getElementById("submitButton");
   let prompt = document.getElementById("prompt");
   let genreList = [];
+  let slider = document.getElementById("myRange");
+  let output = document.getElementById("demo");
+  // output.innerHTML = slider.value; // Display the default slider value
+
+  // Update the current slider value (each time you drag the slider handle)
+  slider.oninput = function () {
+    slider.innerHTML = this.value;
+  };
 
   for (var i = 0; i < refButtonDiv.children.length; i++) {
     let button = refButtonDiv.children[i].children[0];
@@ -68,6 +77,8 @@ window.onload = function () {
       hiddenElementVis.setAttribute("value", "True");
     }
     hiddenElement.setAttribute("value", genreList);
+
+    hiddenElementPop.setAttribute("value", slider.value);
 
     let selectedCount = 0;
     for (var i = 0; i < refButtonDiv.children.length; i++) {
