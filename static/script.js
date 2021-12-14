@@ -1,3 +1,14 @@
+document.onreadystatechange = function () {
+  const loader = document.getElementById("loader");
+  if (document.readyState !== "complete") {
+    document.querySelector("body").style.visibility = "hidden";
+    loader.style.visibility = "visible";
+  } else {
+    loader.style.visibility = "hidden";
+    document.querySelector("body").style.visibility = "visible";
+  }
+};
+
 window.onload = function () {
   if (window.matchMedia("(max-width: 767px)").matches) {
     const dropdownitem = document.getElementById("dropdownitem");

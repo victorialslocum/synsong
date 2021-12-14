@@ -63,7 +63,6 @@ window.onload = function () {
   };
 
   submitButton.onclick = function () {
-    console.log("success");
     for (var i = 0; i < refButtonDiv.children.length; i++) {
       let button = refButtonDiv.children[i].children[0];
       if (button.classList.contains("is-focused")) {
@@ -92,6 +91,9 @@ window.onload = function () {
     } else if (prompt.value == "") {
       alert("Input a prompt!");
     } else {
+      console.log("success");
+      document.querySelector("body").style.visibility = "hidden";
+      loader.style.visibility = "visible";
       inputForm.submit();
     }
   };
