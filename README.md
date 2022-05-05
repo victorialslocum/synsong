@@ -13,6 +13,12 @@ that will generate a playlist based on a text prompt! It's still in the works, b
 - [ ] genre detection
 - [x] website ([synsong.app](https://synsong.app))
 
+### Here's a short demo:
+
+
+https://user-images.githubusercontent.com/80417010/166970222-d264ad85-a7e3-4bc2-ad16-1a09eea25ef0.mp4
+
+
 ## Anyways...
 
 :wave: Hi! I'm Victoria, super happy you're here. This is python :snake: project #2 for me (you can find my very simple first one
