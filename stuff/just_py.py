@@ -24,29 +24,33 @@ SCOPE = 'playlist-modify-public user-read-private'
 prompt = "sunshine is my favorite color, yellow is the color of bees and happiness"
 
 genre_list = "blues,pop"
+vis = True
+pop = 50
 
 
-def make_playlist(prompt, genre_list):
+def make_playlist(prompt, genre_list, vis, pop):
 
     nlp = spacy.load('en_core_web_sm')
 
     def create_title(prompt):
-        text = nlp(prompt)
-        title_list = []
+        doc = nlp(prompt)
 
-        for token in text:
-            if token.pos_ in ['NOUN', 'ADJ']:
-                if token.dep_ in ['nsubj', 'pobj'] or token.head.lemma_ == 'be':
-                    tokens = [t.text for t in token.subtree]
-                    title_list.append(tokens)
-        print("title list: ")
-        print(title_list)
+        title_list_v = [[child.text for child in tok.subtree if child.dep_ not in ['aux', 'neg']]
+                        for tok in doc if tok.pos_ in ['VERB', 'AUX'] and tok.dep_ in ['pcomp', 'xcomp', 'advcl', 'ccomp']]
 
-        if title_list != []:
-            chosen = random.sample(title_list, 1)[0]
-            title = ' '.join(chosen)
+        title_list_n = [[child.text for child in tok.subtree] for tok in doc if tok.pos_ in
+                        ['NOUN', 'ADJ'] and tok.dep_ in ['nsubj', 'pobj']]
+
+        title_list = [item for item in [
+            title_list_v + title_list_n][0] if 3 < len(item) < 8]
+
+        title = ''
+        if title_list:
+            title = ' '.join(random.sample(title_list, 1)[0])
         else:
-            title = prompt
+            title_list_new = [chunk.text for chunk in doc.noun_chunks]
+
+            title = max(title_list_new, key=len) if title_list_new else prompt
 
         return title
 
@@ -183,12 +187,29 @@ def make_playlist(prompt, genre_list):
     song_dicts = []
     genre_list = genre_list.split(",")
 
+    genres = []
+    [genres.append(x) for x in genre_list if x not in genres]
+
+    pop = int(pop)
+    print(pop)
+
     for list in word_list:
-        for genre in genre_list:
+        if pop == 0:
+            lenlist = [len(list)*4, 0]
+        if pop == 100:
+            lenlist = [0, len(list)*4]
+        elif pop < 40:
+            lenlist = [len(list)*3, len(list)]
+        elif 40 <= pop <= 70:
+            lenlist = [len(list)*2, len(list)*2]
+        elif pop > 70:
+            lenlist = [len(list), len(list)*3]
+
+        for genre in genres:
             parameter1 = parameters(
-                list, genre_ids[genre], len(list)*2, 'none')
+                list, genre_ids[genre], lenlist[0], 'none')
             parameter2 = parameters(
-                list, genre_ids[genre], len(list)*3, 'desc')
+                list, genre_ids[genre], lenlist[1], 'desc')
 
             song_dicts.append(get_song_list(parameter1))
             song_dicts.append(get_song_list(parameter2))
@@ -209,7 +230,7 @@ def make_playlist(prompt, genre_list):
         print("more words: ")
         print(more_words)
         for word in more_words:
-            for genre in genre_list:
+            for genre in genres:
                 parameter1 = parameters(
                     word, genre_ids[genre], len(list)*2, 'none')
                 parameter2 = parameters(
@@ -228,10 +249,10 @@ def make_playlist(prompt, genre_list):
     if len(songs) > 25:
         songs = {S: A for (S, A) in [x for x in songs.items()][:30]}
 
-    scope = "playlist-modify-public"
+    sp = spotipy.Spotify(auth=session.get('token_info').get('access_token'))
 
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=SPOTIPY_CLIENT_ID,
-                                                   client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri='http://localhost:8000/'))
+    user = sp.me()
+    print(user)
 
     track_id_list = []
 
@@ -246,13 +267,13 @@ def make_playlist(prompt, genre_list):
 
     description = prompt + " ❤ synsong.app"
     playlist = sp.user_playlist_create(
-        'victoriaslo235', title, public=True, collaborative=False, description=description)
+        user['id'], title, public=vis, collaborative=False, description=description)
 
     playlist_id = playlist['id']
     sp.user_playlist_add_tracks(
-        'a0f90529781c4f6a', playlist_id, track_id_list, position=None)
+        user['id'], playlist_id, track_id_list, position=None)
 
     return
 
 
-make_playlist(prompt, genre_list)
+make_playlist(prompt, genre_list, vis, pop)

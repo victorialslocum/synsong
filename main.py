@@ -137,22 +137,24 @@ def make_playlist(prompt, genre_list, vis, pop):
     nlp = spacy.load('en_core_web_sm')
 
     def create_title(prompt):
-        text = nlp(prompt)
-        title_list = []
+        doc = nlp(prompt)
 
-        for token in text:
-            if token.pos_ in ['NOUN', 'ADJ']:
-                if token.dep_ in ['nsubj', 'pobj'] or token.head.lemma_ == 'be':
-                    tokens = [t.text for t in token.subtree]
-                    title_list.append(tokens)
-        print("title list: ")
-        print(title_list)
+        title_list_v = [[child.text for child in tok.subtree if child.dep_ not in ['aux', 'neg']]
+                        for tok in doc if tok.pos_ in ['VERB', 'AUX'] and tok.dep_ in ['pcomp', 'xcomp', 'advcl', 'ccomp']]
 
-        if title_list != []:
-            chosen = random.sample(title_list, 1)[0]
-            title = ' '.join(chosen)
+        title_list_n = [[child.text for child in tok.subtree] for tok in doc if tok.pos_ in
+                        ['NOUN', 'ADJ'] and tok.dep_ in ['nsubj', 'pobj']]
+
+        title_list = [item for item in
+                      title_list_v + title_list_n if 3 < len(item) < 8]
+
+        title = ''
+        if title_list:
+            title = ' '.join(random.sample(title_list, 1)[0])
         else:
-            title = prompt
+            title_list_new = [chunk.text for chunk in doc.noun_chunks]
+
+            title = max(title_list_new, key=len) if title_list_new else prompt
 
         return title
 
@@ -306,9 +308,6 @@ def make_playlist(prompt, genre_list, vis, pop):
             lenlist = [len(list)*2, len(list)*2]
         elif pop > 70:
             lenlist = [len(list), len(list)*3]
-
-        print("none: ", lenlist[0])
-        print("pop: ", lenlist[1])
 
         for genre in genres:
             parameter1 = parameters(
