@@ -3,7 +3,7 @@
 ### A prompt-based playlist generator!
 
 Hi! I'm super excited for this project cause it's allowing me to explore some more NLP stuff. Synsong is an application
-that will generate a playlist based on a text prompt! It's still in the words, but here's a list of features.
+that will generate a playlist based on a text prompt! It's still in the works, but here's a list of features.
 
 - [x] 1-3 line text prompt analysis
 - [ ] large text analysis (using topic modeling?)
@@ -12,6 +12,12 @@ that will generate a playlist based on a text prompt! It's still in the words, b
 - [x] genre specification
 - [ ] genre detection
 - [x] website ([synsong.app](https://synsong.app))
+
+### Here's a short demo:
+
+
+https://user-images.githubusercontent.com/80417010/166970222-d264ad85-a7e3-4bc2-ad16-1a09eea25ef0.mp4
+
 
 ## Anyways...
 
