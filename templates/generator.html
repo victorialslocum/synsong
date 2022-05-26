@@ -14,26 +14,26 @@ addscript %}
 <section class="hero is-primary is-small mb-6">
   <div class="hero-body">
     <div class="container has-text-centered">
-      <p class="title">Input a prompt and edit your playlist settings</p>
+      <p class="title">Input a quote and edit your playlist settings</p>
     </div>
   </div>
 </section>
 {% endblock %} {% block content %}
 <div class="container is-max-desktop has-text-centered">
-  <form action="" method="post" name="prompt" id="inputForm">
+  <form action="" method="post" name="quote" id="inputForm">
     <div class="columns">
       <div class="column p-5">
         <div class="field-label is-medium has-text-left pb-3">
-          <label class="label" for="prompt">Prompt</label>
+          <label class="label" for="quote">Quote</label>
         </div>
         <div class="field-body">
           <div class="field">
             <textarea
               class="textarea is-primary"
               type="text"
-              placeholder="A sentence, a quote, a paragraph..."
-              name="prompt"
-              id="prompt"
+              placeholder="The wisdom of the wise and the experience of the ages are perpetuated by quotations..."
+              name="quote"
+              id="quote"
               rows="10"
             ></textarea>
           </div>
@@ -41,7 +41,7 @@ addscript %}
       </div>
       <div class="column p-5">
         <div class="field-label is-medium has-text-left pb-3">
-          <label class="label" for="prompt">Genres</label>
+          <label class="label" for="quote">Genres</label>
         </div>
         <div
           class="field is-grouped is-grouped-multiline pb-2"

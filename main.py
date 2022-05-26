@@ -45,12 +45,12 @@ def home():
 @app.route("/generator", methods=['GET', 'POST'])
 def generator():
     if request.method == 'POST':
-        prompt = request.form['prompt']
+        quote = request.form['quote']
         genre_list = request.form.get('hidden')
         vis = request.form.get("hiddenvis")
         pop = request.form.get("hiddenpop")
         print(genre_list)
-        return redirect(url_for('make_playlist', prompt=prompt, genre_list=genre_list, vis=vis, pop=pop))
+        return redirect(url_for('make_playlist', quote=quote, genre_list=genre_list, vis=vis, pop=pop))
     else:
         return render_template("generator.html", login_url="/logout", login_text='Log out', app_url="/generator", app_text="Go to app", ganalytics=GANALYTICS)
 
@@ -117,14 +117,14 @@ def logout():
     return redirect("/")
 
 
-@app.route("/success/<prompt>/<playlist_id>/<genres>/<pop>")
-def success(prompt, playlist_id, genres, pop):
+@app.route("/success/<quote>/<playlist_id>/<genres>/<pop>")
+def success(quote, playlist_id, genres, pop):
 
-    return render_template("success.html", success=True, playlist_id=playlist_id, genres=genres, prompt=prompt, pop=pop, login_url="/logout", login_text='Log out', ganalytics=GANALYTICS)
+    return render_template("success.html", success=True, playlist_id=playlist_id, genres=genres, quote=quote, pop=pop, login_url="/logout", login_text='Log out', ganalytics=GANALYTICS)
 
 
-@app.route("/make_playlist/<prompt>/<genre_list>/<vis>/<pop>", methods=['GET', 'POST'])
-def make_playlist(prompt, genre_list, vis, pop):
+@app.route("/make_playlist/<quote>/<genre_list>/<vis>/<pop>", methods=['GET', 'POST'])
+def make_playlist(quote, genre_list, vis, pop):
     session['token_info'], authorized = get_token(session)
     session.modified = True
 
@@ -136,34 +136,44 @@ def make_playlist(prompt, genre_list, vis, pop):
 
     nlp = spacy.load('en_core_web_sm')
 
-    def create_title(prompt):
-        doc = nlp(prompt)
+    # create title of playlist from quote
+    def create_title(quote):
+        # spaCy splits quote into tokens
+        doc = nlp(quote)
 
-        title_list_v = [[child.text for child in tok.subtree if child.dep_ not in ['aux', 'neg']]
-                        for tok in doc if tok.pos_ in ['VERB', 'AUX'] and tok.dep_ in ['pcomp', 'xcomp', 'advcl', 'ccomp']]
+        # breaks the doc into multi-word segments, matching whether the head has complement or adverbial clause
+        # dependency relationship
+        title_list_v = [[child.text for child in tok.subtree]
+                        for tok in doc if tok.dep_ in ['pcomp', 'xcomp', 'ccomp', 'advcl']]
 
-        title_list_n = [[child.text for child in tok.subtree] for tok in doc if tok.pos_ in
-                        ['NOUN', 'ADJ'] and tok.dep_ in ['nsubj', 'pobj']]
+        # breaks the doc into multi-word segements, matching whether its a subject or object of a prep
+        title_list_n = [[child.text for child in tok.subtree]
+                        for tok in doc if tok.dep_ in ['nsubj', 'pobj']]
 
+        # combining the lists if the segments have 4-7 words
         title_list = [item for item in
                       title_list_v + title_list_n if 3 < len(item) < 8]
-
+        print(title_list)
         title = ''
+        # if list has items, take a random one, else, make noun chunks and take one, else quote
         if title_list:
             title = ' '.join(random.sample(title_list, 1)[0])
+            title = re.sub(r"\s+(?=')", '', title)
         else:
             title_list_new = [chunk.text for chunk in doc.noun_chunks]
 
-            title = max(title_list_new, key=len) if title_list_new else prompt
+            title = max(title_list_new, key=len) if title_list_new else quote
+            title = re.sub(r"\s+(?=')", '', title)
 
+        # return chosen title
         return title
 
-    title = create_title(prompt)
+    title = create_title(quote)
     print("title: ")
     print(title)
 
-    def get_constituents(prompt):
-        text = nlp(prompt)
+    def get_constituents(quote):
+        text = nlp(quote)
 
         chunks = [chunk.text for chunk in text.noun_chunks]
         filt_chunks = []
@@ -184,8 +194,8 @@ def make_playlist(prompt, genre_list, vis, pop):
         print(const_list)
         return const_list
 
-    def get_more_constituents(prompt):
-        text = nlp(prompt)
+    def get_more_constituents(quote):
+        text = nlp(quote)
         filt_chunks = []
         for token in text:
             if not token.is_stop:
@@ -195,7 +205,7 @@ def make_playlist(prompt, genre_list, vis, pop):
         print(filt_chunks)
         return filt_chunks
 
-    words = get_constituents(prompt)
+    words = get_constituents(quote)
     if len(words) > 5:
         words = random.sample(words, 5)
     print("words: ")
@@ -330,7 +340,7 @@ def make_playlist(prompt, genre_list, vis, pop):
     print(songs)
 
     if len(songs) < 10:
-        more_words = get_more_constituents(prompt)
+        more_words = get_more_constituents(quote)
         print("more words: ")
         print(more_words)
         for word in more_words:
@@ -369,7 +379,7 @@ def make_playlist(prompt, genre_list, vis, pop):
             track_id = response['tracks']['items'][0]['id']
             track_id_list.append(track_id)
 
-    description = prompt + " ❤ synsong.app"
+    description = quote + " ❤ synsong.app"
     playlist = sp.user_playlist_create(
         user['id'], title, public=True, collaborative=False, description=description)
 
@@ -377,7 +387,7 @@ def make_playlist(prompt, genre_list, vis, pop):
     sp.user_playlist_add_tracks(
         user['id'], playlist_id, track_id_list, position=None)
 
-    return redirect(url_for('success', success=vis, prompt=prompt, genres=genre_list, pop=pop, playlist_id=playlist_id, login_url="/logout", login_text='Log out'))
+    return redirect(url_for('success', success=vis, quote=quote, genres=genre_list, pop=pop, playlist_id=playlist_id, login_url="/logout", login_text='Log out'))
 
 
 def get_token(session):

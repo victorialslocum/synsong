@@ -21,45 +21,55 @@ API_BASE = 'https://accounts.spotify.com'
 SCOPE = 'playlist-modify-public user-read-private'
 
 
-prompt = "sunshine is my favorite color, yellow is the color of bees and happiness"
+quote = "sunshine is my favorite color, yellow is the color of bees and happiness"
 
 genre_list = "blues,pop"
 vis = True
 pop = 50
 
 
-def make_playlist(prompt, genre_list, vis, pop):
+def make_playlist(quote, genre_list, vis, pop):
 
     nlp = spacy.load('en_core_web_sm')
 
-    def create_title(prompt):
-        doc = nlp(prompt)
+    # create title of playlist from quote
+    def create_title(quote):
+        # spaCy splits quote into tokens
+        doc = nlp(quote)
 
-        title_list_v = [[child.text for child in tok.subtree if child.dep_ not in ['aux', 'neg']]
-                        for tok in doc if tok.pos_ in ['VERB', 'AUX'] and tok.dep_ in ['pcomp', 'xcomp', 'advcl', 'ccomp']]
+        # breaks the doc into multi-word segments, matching whether the head has complement or adverbial clause
+        # dependency relationship
+        title_list_v = [[child.text for child in tok.subtree]
+                        for tok in doc if tok.dep_ in ['pcomp', 'xcomp', 'ccomp', 'advcl']]
 
-        title_list_n = [[child.text for child in tok.subtree] for tok in doc if tok.pos_ in
-                        ['NOUN', 'ADJ'] and tok.dep_ in ['nsubj', 'pobj']]
+        # breaks the doc into multi-word segements, matching whether its a subject or object of a prep
+        title_list_n = [[child.text for child in tok.subtree]
+                        for tok in doc if tok.dep_ in ['nsubj', 'pobj']]
 
-        title_list = [item for item in [
-            title_list_v + title_list_n][0] if 3 < len(item) < 8]
-
+        # combining the lists if the segments have 4-7 words
+        title_list = [item for item in
+                      title_list_v + title_list_n if 3 < len(item) < 8]
+        print(title_list)
         title = ''
+        # if list has items, take a random one, else, make noun chunks and take one, else quote
         if title_list:
             title = ' '.join(random.sample(title_list, 1)[0])
+            title = re.sub(r"\s+(?=')", '', title)
         else:
             title_list_new = [chunk.text for chunk in doc.noun_chunks]
 
-            title = max(title_list_new, key=len) if title_list_new else prompt
+            title = max(title_list_new, key=len) if title_list_new else quote
+            title = re.sub(r"\s+(?=')", '', title)
 
+        # return chosen title
         return title
 
-    title = create_title(prompt)
+    title = create_title(quote)
     print("title: ")
     print(title)
 
-    def get_constituents(prompt):
-        text = nlp(prompt)
+    def get_constituents(quote):
+        text = nlp(quote)
 
         chunks = [chunk.text for chunk in text.noun_chunks]
         filt_chunks = []
@@ -80,8 +90,8 @@ def make_playlist(prompt, genre_list, vis, pop):
         print(const_list)
         return const_list
 
-    def get_more_constituents(prompt):
-        text = nlp(prompt)
+    def get_more_constituents(quote):
+        text = nlp(quote)
         filt_chunks = []
         for token in text:
             if not token.is_stop:
@@ -91,7 +101,7 @@ def make_playlist(prompt, genre_list, vis, pop):
         print(filt_chunks)
         return filt_chunks
 
-    words = get_constituents(prompt)
+    words = get_constituents(quote)
     if len(words) > 5:
         words = random.sample(words, 5)
     print("words: ")
@@ -226,7 +236,7 @@ def make_playlist(prompt, genre_list, vis, pop):
     print(songs)
 
     if len(songs) < 10:
-        more_words = get_more_constituents(prompt)
+        more_words = get_more_constituents(quote)
         print("more words: ")
         print(more_words)
         for word in more_words:
@@ -265,7 +275,7 @@ def make_playlist(prompt, genre_list, vis, pop):
             track_id = response['tracks']['items'][0]['id']
             track_id_list.append(track_id)
 
-    description = prompt + " ❤ synsong.app"
+    description = quote + " ❤ synsong.app"
     playlist = sp.user_playlist_create(
         user['id'], title, public=vis, collaborative=False, description=description)
 
@@ -276,4 +286,4 @@ def make_playlist(prompt, genre_list, vis, pop):
     return
 
 
-make_playlist(prompt, genre_list, vis, pop)
+make_playlist(quote, genre_list, vis, pop)

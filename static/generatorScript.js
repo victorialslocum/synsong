@@ -8,7 +8,7 @@ window.onload = function () {
   let hiddenElementVis = document.getElementById("hiddenvis");
   let hiddenElementPop = document.getElementById("hiddenpop");
   let submitButton = document.getElementById("submitButton");
-  let prompt = document.getElementById("prompt");
+  let quote = document.getElementById("quote");
   let genreList = [];
   let slider = document.getElementById("myRange");
   let output = document.getElementById("demo");
@@ -88,8 +88,8 @@ window.onload = function () {
     }
     if (selectedCount == 0) {
       alert("Select at least 1 genre!");
-    } else if (prompt.value == "") {
-      alert("Input a prompt!");
+    } else if (quote.value == "") {
+      alert("Input a quote!");
     } else {
       console.log("success");
       document.querySelector("body").style.visibility = "hidden";
