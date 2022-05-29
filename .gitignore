@@ -1,8 +1,11 @@
 keys.py
 .cache
-venv/
+venv
 __pycache__
 .env
 node_modules
 sass
 models
+poetry_class/data
+poetry_class/spacy_db
+poetry_class/output
