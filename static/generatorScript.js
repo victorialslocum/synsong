@@ -21,21 +21,40 @@ window.onload = function () {
 
   for (var i = 0; i < refButtonDiv.children.length; i++) {
     let button = refButtonDiv.children[i].children[0];
+    if (button.innerHTML.includes("all genres")) {
+      button.classList.add("is-focused");
+    }
 
     button.onclick = function () {
       let selectedCount = 0;
+
       for (var i = 0; i < refButtonDiv.children.length; i++) {
         let button = refButtonDiv.children[i].children[0];
         if (button.classList.contains("is-focused")) {
           selectedCount++;
         }
       }
-      if (this.classList.contains("is-focused")) {
+
+      if (button.classList.contains("is-focused")) {
         this.classList.remove("is-focused");
+      } else if (this.innerHTML.includes("all genres")) {
+        for (var i = 0; i < refButtonDiv.children.length; i++) {
+          let button = refButtonDiv.children[i].children[0];
+          if (button.classList.contains("is-focused")) {
+            button.classList.remove("is-focused");
+          }
+        }
+        this.classList.add("is-focused");
       } else {
         if (selectedCount >= 3) {
           alert("you can only select 3 genres");
         } else {
+          for (var i = 0; i < refButtonDiv.children.length; i++) {
+            let button = refButtonDiv.children[i].children[0];
+            if (button.innerHTML.includes("all genres")) {
+              button.classList.remove("is-focused");
+            }
+          }
           this.classList.add("is-focused");
         }
       }
