@@ -21,7 +21,7 @@ API_BASE = 'https://accounts.spotify.com'
 SCOPE = 'playlist-modify-public user-read-private'
 
 
-quote = "sunshine is my favorite color, yellow is the color of bees and happiness"
+quote = "The greatest glory in living lies not in never falling, but in rising every time we fall."
 
 genre_list = "blues,pop"
 vis = True
@@ -30,26 +30,24 @@ pop = 50
 
 def make_playlist(quote, genre_list, vis, pop):
 
+    # initialize spaCy tokenization
     nlp = spacy.load('en_core_web_sm')
+    # intialize spaCy quote categorization model
+    textcat = spacy.load(
+        '/home/victoriaslocum/synsong/poetry_class/output/model-best')
 
     # create title of playlist from quote
+
     def create_title(quote):
         # spaCy splits quote into tokens
         doc = nlp(quote)
 
-        # breaks the doc into multi-word segments, matching whether the head has complement or adverbial clause
-        # dependency relationship
-        title_list_v = [[child.text for child in tok.subtree]
-                        for tok in doc if tok.dep_ in ['pcomp', 'xcomp', 'ccomp', 'advcl']]
+        # breaks the doc into multi-word segements, matching whether its a subject or object
+        # of a prep and has 4-7 words
+        title_list = [[child.text for child in tok.subtree]
+                      for tok in doc if 3 < len(list(tok.subtree)) < 8
+                      and tok.dep_ in ['nsubj', 'pobj', 'pcomp', 'xcomp', 'ccomp', 'advcl']]
 
-        # breaks the doc into multi-word segements, matching whether its a subject or object of a prep
-        title_list_n = [[child.text for child in tok.subtree]
-                        for tok in doc if tok.dep_ in ['nsubj', 'pobj']]
-
-        # combining the lists if the segments have 4-7 words
-        title_list = [item for item in
-                      title_list_v + title_list_n if 3 < len(item) < 8]
-        print(title_list)
         title = ''
         # if list has items, take a random one, else, make noun chunks and take one, else quote
         if title_list:
@@ -62,50 +60,49 @@ def make_playlist(quote, genre_list, vis, pop):
             title = re.sub(r"\s+(?=')", '', title)
 
         # return chosen title
+        print("title: ")
+        print(title)
         return title
 
-    title = create_title(quote)
-    print("title: ")
-    print(title)
+    # get quote category (in progress)
+
+    def get_cats(quote):
+        # use textcat spaCy model
+        doc = textcat(quote)
+        # get predicted cats
+        predictions = doc.cats
+        print("cats:")
+        print(predictions)
+        # get predicted cat
+        cat = max(predictions, key=predictions.get)
+        print(cat)
+        # list of words to search based on cat (in progress)
+        cat_word_list = [str(cat)]
+
+        return predictions, cat_word_list
+
+    # get list of important words for search params
 
     def get_constituents(quote):
-        text = nlp(quote)
+        # spaCy tokenization
+        doc = nlp(quote)
 
-        chunks = [chunk.text for chunk in text.noun_chunks]
-        filt_chunks = []
+        # get noun chunks (lemma)
+        n_chunks = [[word.lemma_ for word in chunk if not word.is_stop]
+                    for chunk in doc.noun_chunks]
 
-        for const in chunks:
-            words = nlp(const)
-            filt_chunks.append(
-                [token.lemma_ for token in words if not token.is_stop])
+        # get important verbs (lemma)
+        v_chunks = [[tok.lemma_] for tok in doc if tok.dep_ in [
+            'pcomp', 'xcomp', 'ccomp', 'advcl']]
 
-        const_list = []
-        for chunk in filt_chunks:
-            const_list.append(' '.join(chunk))
-
-        while("" in const_list):
-            const_list.remove("")
+        # make total list
+        const_list = [' '.join(item) for item in n_chunks + v_chunks if item]
 
         print("constituents: ")
         print(const_list)
         return const_list
 
-    def get_more_constituents(quote):
-        text = nlp(quote)
-        filt_chunks = []
-        for token in text:
-            if not token.is_stop:
-                filt_chunks.append([token.lemma_])
-
-        print("more constituents: ")
-        print(filt_chunks)
-        return filt_chunks
-
-    words = get_constituents(quote)
-    if len(words) > 5:
-        words = random.sample(words, 5)
-    print("words: ")
-    print(words)
+    # prepare words for params (need to redo)
 
     def word_list_combo(word_list):
         p = [[]]
@@ -143,13 +140,28 @@ def make_playlist(quote, genre_list, vis, pop):
         print(list)
         return list
 
+    # create title
+    title = create_title(quote)
+    # get categories and category words
+    cats, cat_words = get_cats(quote)
+    # get words (max 4)
+    words = get_constituents(quote)
+    if len(words) > 4:
+        words = random.sample(words, 4)
+    words += cat_words
+    print("words: ")
+    print(words)
+    # get list of words
     word_list = word_list_combo(words)
+
+    # list of Musixmatch genre id's
     genre_ids = {'all': 34, 'blues': 2, 'comedy': 3, 'children': 4, 'classical': 5, 'country': 6,
                  'electronic': 7, 'holiday': 8, 'opera': 9, 'folk': 10, 'jazz': 11,
                  'latin': 12, 'new age': 13, 'pop': 14,  'randb': 15, 'soundtrack': 16,
                  'dance': 17, 'rap': 18, 'world': 19, 'alternative': 20, 'rock': 21,
                  'christian': 22, 'vocal': 23, 'reggae': 24, 'k-pop': 51}
 
+    # get parameters for Musixmatch query
     def parameters(word_list, genre, page_size, s_track_rating):
         parameters = {
             'apikey': MUSIXMATCH_API_KEY,
@@ -203,23 +215,23 @@ def make_playlist(quote, genre_list, vis, pop):
     pop = int(pop)
     print(pop)
 
-    for list in word_list:
+    for word in word_list:
         if pop == 0:
-            lenlist = [len(list)*4, 0]
+            lenlist = [len(word)*4, 0]
         if pop == 100:
-            lenlist = [0, len(list)*4]
+            lenlist = [0, len(word)*4]
         elif pop < 40:
-            lenlist = [len(list)*3, len(list)]
+            lenlist = [len(word)*3, len(word)]
         elif 40 <= pop <= 70:
-            lenlist = [len(list)*2, len(list)*2]
+            lenlist = [len(word)*2, len(word)*2]
         elif pop > 70:
-            lenlist = [len(list), len(list)*3]
+            lenlist = [len(word), len(word)*3]
 
         for genre in genres:
             parameter1 = parameters(
-                list, genre_ids[genre], lenlist[0], 'none')
+                word, genre_ids[genre], lenlist[0], 'none')
             parameter2 = parameters(
-                list, genre_ids[genre], lenlist[1], 'desc')
+                word, genre_ids[genre], lenlist[1], 'desc')
 
             song_dicts.append(get_song_list(parameter1))
             song_dicts.append(get_song_list(parameter2))
@@ -235,26 +247,26 @@ def make_playlist(quote, genre_list, vis, pop):
     print("songs: ")
     print(songs)
 
-    if len(songs) < 10:
-        more_words = get_more_constituents(quote)
-        print("more words: ")
-        print(more_words)
-        for word in more_words:
-            for genre in genres:
-                parameter1 = parameters(
-                    word, genre_ids[genre], len(list)*2, 'none')
-                parameter2 = parameters(
-                    word, genre_ids[genre], len(list)*3, 'desc')
+    # if len(songs) < 10:
+    #     more_words = get_more_constituents(quote)
+    #     print("more words: ")
+    #     print(more_words)
+    #     for word in more_words:
+    #         for genre in genres:
+    #             parameter1 = parameters(
+    #                 word, genre_ids[genre], len(list)*2, 'none')
+    #             parameter2 = parameters(
+    #                 word, genre_ids[genre], len(list)*3, 'desc')
 
-                song_dicts.append(get_song_list(parameter1))
-                song_dicts.append(get_song_list(parameter2))
-        song_list = dict(chain.from_iterable(d.items() for d in song_dicts))
-        for song, artist in song_list.items():
-            if song not in songs.keys():
-                songs[song] = artist
+    #             song_dicts.append(get_song_list(parameter1))
+    #             song_dicts.append(get_song_list(parameter2))
+    #     song_list = dict(chain.from_iterable(d.items() for d in song_dicts))
+    #     for song, artist in song_list.items():
+    #         if song not in songs.keys():
+    #             songs[song] = artist
 
-        print("new songs: ")
-        print(songs)
+    #     print("new songs: ")
+    #     print(songs)
 
     if len(songs) > 25:
         songs = {S: A for (S, A) in [x for x in songs.items()][:30]}
