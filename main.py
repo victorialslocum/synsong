@@ -138,7 +138,7 @@ def make_playlist(quote, genre_list, vis, pop):
     nlp = spacy.load('en_core_web_sm')
     # intialize spaCy quote categorization model
     textcat = spacy.load(
-        '/home/victoriaslocum/synsong/poetry_class/output/model-best')
+        'static/textcat-model')
 
     # create title of playlist from quote
 
