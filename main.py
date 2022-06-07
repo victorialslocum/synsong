@@ -244,6 +244,16 @@ def make_playlist(quote, genre_list, vis, pop):
         print(list)
         return list
 
+    def get_more_constituents(quote):
+        text = nlp(quote)
+        filt_chunks = []
+        for token in text:
+            if not token.is_stop:
+                filt_chunks.append([token.lemma_])
+        print("more constituents: ")
+        print(filt_chunks)
+        return filt_chunks
+
     # create title
     title = create_title(quote)
     # get categories and category words
