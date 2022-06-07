@@ -8,4 +8,4 @@ sass
 models
 poetry_class/data
 poetry_class/spacy_db
-poetry_class/output
+poetry_class/output/model-last
